@@ -13,6 +13,8 @@ const Leaderboard = (props) => {
                         <th>Score</th>
                     </tr>
                 </thead>
+                {/* Receving format is Array[Array(Candidate), score]  and the length is 3
+                it is initialized to default value in the voting.sol*/}
                 {props.leadersData && props.leadersData.map((data, index) =>{
                     return <tbody key={index}>
                             <tr>

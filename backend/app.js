@@ -12,8 +12,8 @@ async function main(){
   const defaultAccount = await contract.defaultAccount;
   routes(app, contract, defaultAccount);
 
-  app.listen(process.env.PORT || 8082, () => {
-    console.log('listening on port '+ (process.env.PORT || 8082));
+  app.listen(contract.port, () => {
+    console.log('listening on port '+ contract.port);
   })
 }
 
