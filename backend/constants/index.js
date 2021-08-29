@@ -1,3 +1,8 @@
+const PATH = {
+    COMPILED_WKND: "../../smartcontract/artifacts/contracts/WakandaToken.sol/WakandaToken.json",
+    COMPILED_VOTING: "../../smartcontract/artifacts/contracts/Voting.sol/Voting.json"
+}
+
 const ACTION_TYPE = {
     REQUEST: "REQUEST",
     SUCCESS: "SUCCESS",
@@ -21,6 +26,8 @@ const MESSAGE = {
 }
 
 module.exports = {
+    PATH: PATH,
     ACTION_TYPE: ACTION_TYPE,
-    MESSAGE: MESSAGE
+    MESSAGE: MESSAGE,
+    VOTING_WKND_TOKEN: 1
 }

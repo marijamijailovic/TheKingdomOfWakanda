@@ -1,5 +1,5 @@
 const constants = require("../constants");
-const VOTING_WKND_TOKEN = 1;
+const transaction = require("./transaction");
 
 routes = (app, contract, defaultAccount) => {
     app.use(function(req, res, next) {
@@ -15,7 +15,7 @@ routes = (app, contract, defaultAccount) => {
             if(wakandaAddress){
                 const isRegistred = await contract.wakandaTokenContract.methods.isRegistered(wakandaAddress).call();
                 if(!isRegistred) {
-                    const response = await contract.wakandaTokenContract.methods.transfer(wakandaAddress, VOTING_WKND_TOKEN).send({from: defaultAccount});
+                    const response = await transaction.registrationTx(wakandaAddress, defaultAccount);
                     if(response) {
                         res.json({"status":"success", "reason": constants.MESSAGE.SUCCESS_REGISTRATION });
                     }
@@ -32,6 +32,7 @@ routes = (app, contract, defaultAccount) => {
                 res.status(400).json({"status":"failed", "reason": constants.MESSAGE.WRONG_INPUT});
             }
         } catch(error) {
+            console.log(error);
             res.status(500).json({"status":"failed", "reason": constants.MESSAGE.FAILED_REGISTRATION});
         }
     });
@@ -57,14 +58,16 @@ routes = (app, contract, defaultAccount) => {
             const candidate = req.body.candidate;
             const amountOfVotes = req.body.amountOfVotes;
             if(wakandaAddress || candidateId || candidate || amountOfVotes) {
-                    const response = await contract.votingContract.methods.vote(wakandaAddress, candidateId, candidate, amountOfVotes).send({from: defaultAccount});
-                    if(response){
-                        res.json({"status":"success", "reason": constants.MESSAGE.SUCCESS_VOTE});
-                    }
+                //const response = await contract.votingContract.methods.vote(wakandaAddress, candidateId, candidate, amountOfVotes).send({from: defaultAccount});
+                const response = await transaction.votingTx(wakandaAddress, candidateId, candidate, amountOfVotes, defaultAccount);
+                if(response){
+                    res.json({"status":"success", "reason": constants.MESSAGE.SUCCESS_VOTE});
+                }
             } else{
-                res.status(400).json({"status":"failed", "reason":constants.MESSAGE.WRONG_INPUT});
+                res.status(400).json({"status":"failed", "reason": constants.MESSAGE.WRONG_INPUT});
             } 
         } catch (error) {
+            console.log(error);
             res.status(500).json({"status":"failed", "reason":constants.MESSAGE.FAILED_VOTING});
         }
     });

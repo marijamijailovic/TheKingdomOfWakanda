@@ -1,7 +1,11 @@
 require('dotenv').config();
 require("@nomiclabs/hardhat-ethers");
 
-const { API_URL_ROPSTEN, PRIVATE_KEY_ROPSTEN, API_URL_KOVAN, PRIVATE_KEY_KOVAN } = process.env;
+const { 
+  API_URL_LOCAL,
+  API_URL_KOVAN_ALCHEMY,
+  PRIVATE_KEY_KOVAN 
+} = process.env;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -23,15 +27,10 @@ module.exports = {
   solidity: "0.8.4",
   networks: {
     localhost: {
-      url: "http://localhost:8545"
+      url: API_URL_LOCAL
     },
-    hardhat: {},
-    ropsten: {
-      url: API_URL_ROPSTEN,
-      accounts: [`0x${PRIVATE_KEY_ROPSTEN}`]
-    }, 
     kovan: {
-      url: API_URL_KOVAN,
+      url: API_URL_KOVAN_ALCHEMY,
       accounts: [`0x${PRIVATE_KEY_KOVAN}`]
     }
     // hardhat: {

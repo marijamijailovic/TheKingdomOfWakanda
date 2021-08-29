@@ -17,12 +17,14 @@ async function main() {
   // If this script is run directly using `node` you may want to call compile
   // manually to make sure everything is compiled
   // await hre.run('compile');
+  const [deployer] = await hre.ethers.getSigners();
+  console.log("Deploying contracts with the account:", deployer.address);
+
+  console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // We get the contract to deploy
   const WakandaToken = await hre.ethers.getContractFactory("WakandaToken");
   const wakandaToken = await WakandaToken.deploy();
-
-  const wknd = await wakandaToken.deployed();
 
   console.log("WakandaToken deployed to:", wakandaToken.address);
 
