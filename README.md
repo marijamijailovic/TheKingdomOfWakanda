@@ -23,12 +23,13 @@ Compile contrats:
   ```navigate to smartcontract folder (cd smartcontract)```
   ```npx hardhat compile```
 
-Create .env file and set it up to own private values, there is .env.example as the example. Also, depending on the testnet network you choose, you will need to change the variables inside backend/contract/congif.js.
+Create .env file in backend and smartcontract folder and set it up to own private values, there is .env.example as the example. Also, depending on the testnet network you choose, you will need to change the variables inside backend/contract/congif.js.
 
 # :computer: Run application
   
 Run node js server:
   ```navigate to backend folder(cd backend)```
+  ```npm install```
   ```node app.js```
   
 Run frontend:
