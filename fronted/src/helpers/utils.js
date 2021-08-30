@@ -7,10 +7,7 @@ export const changeRoute = (route = "/") => {
 }
 
 export const isEmpty = (string) => {
-    if (string && !string.match(/^ *$/)) {
-		return true;
-	}
-	return false;
+    return string && string === "";
 }
 
 export const isValidWakandaAddresses = (address) => {
