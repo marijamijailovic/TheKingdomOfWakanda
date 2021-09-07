@@ -1,17 +1,18 @@
-const express = require('express');
+const express = require("express");
+const config = require("./config");
+const routes = require("./resources/routes");
+
 const app = express();
-const routes = require('./resources/routes');
-const contract = require('./contract/instance');
+const port = config.PORT;
 
 async function main(){
-  app.use(express.json())
 
-  const defaultAccount = await contract.defaultAccount;
-  console.log("Default account ", defaultAccount);
-  routes(app, contract, defaultAccount);
+  app.use(express.json());
+  
+  routes(app);
 
-  app.listen(contract.port, () => {
-    console.log('listening on port '+ contract.port);
+  app.listen(port, () => {
+    console.log("listening on port "+ port);
   })
 }
 

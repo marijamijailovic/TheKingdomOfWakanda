@@ -1,151 +1,175 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-//import "hardhat/console.sol";
-import "./WakandaToken.sol";
+import "hardhat/console.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./WKNDToken.sol";
 
 contract Voting {
-    uint256 candidatesSize;
-    WakandaToken wknd;
+    address public owner;
+    Candidate[] public candidates;
+    mapping(address => WakandaVoter) public wakandaVoter;
+    uint256[] public leaderboard;
+    WKNDToken wknd;
+    uint256 votingToken;
 
-    mapping(uint256 => Candidate) candidates;
-    mapping(uint256 => CandidateScore) votingBoard;
-    mapping(address => Voter) wakandaVote;
-    CandidateScore[3] leaderboard;
-
-    event NewChallenger(CandidateScore[3] indexed leaderboard);
+    event NewChallenger(uint256[] indexed leaderboard);
 
     struct Candidate {
         string name;
         uint256 age;
         string cult;
-    }
-
-    struct CandidateScore {
-        Candidate candidate;
         uint256 score;
+        uint256 id;
     }
 
-    struct Voter {
-        Candidate voteFor;
+    struct WakandaVoter {
+        bool registered;
+        uint256 voteFor;
         bool hasVoted;
     }
 
-    constructor(WakandaToken _wknd, Candidate[] memory _allCandidates) {
-        wknd = _wknd;
-        candidatesSize = _allCandidates.length;
-        for (uint256 i = 0; i < candidatesSize; i++) {
-            candidates[i].name = _allCandidates[i].name;
-            candidates[i].age = _allCandidates[i].age;
-            candidates[i].cult = _allCandidates[i].cult;
-        }
+    constructor(WKNDToken _wknd) {
+        owner = msg.sender;
+        wknd = WKNDToken(_wknd);
+        votingToken = 1;
     }
 
-    function winningCandidates() public returns (CandidateScore[3] memory) {
-        for (uint256 i = 0; i < candidatesSize; i++) {
-            if (votingBoard[i].score > 0) {
-                if (votingBoard[i].score > leaderboard[0].score) {
-                    leaderboard[2].score = leaderboard[1].score;
-                    leaderboard[2].candidate.name = leaderboard[1]
-                        .candidate
-                        .name;
-                    leaderboard[2].candidate.age = leaderboard[1].candidate.age;
-                    leaderboard[2].candidate.cult = leaderboard[1]
-                        .candidate
-                        .cult;
-
-                    leaderboard[1].score = leaderboard[0].score;
-                    leaderboard[1].candidate.name = leaderboard[0]
-                        .candidate
-                        .name;
-                    leaderboard[1].candidate.age = leaderboard[0].candidate.age;
-                    leaderboard[1].candidate.cult = leaderboard[0]
-                        .candidate
-                        .cult;
-
-                    leaderboard[0].score = votingBoard[i].score;
-                    leaderboard[0].candidate.name = votingBoard[i]
-                        .candidate
-                        .name;
-                    leaderboard[0].candidate.age = votingBoard[i].candidate.age;
-                    leaderboard[0].candidate.cult = votingBoard[i]
-                        .candidate
-                        .cult;
-                } else if (votingBoard[i].score > leaderboard[1].score) {
-                    leaderboard[2].score = leaderboard[1].score;
-                    leaderboard[2].candidate.name = leaderboard[1]
-                        .candidate
-                        .name;
-                    leaderboard[2].candidate.age = leaderboard[1].candidate.age;
-                    leaderboard[2].candidate.cult = leaderboard[1]
-                        .candidate
-                        .cult;
-
-                    leaderboard[1].score = votingBoard[i].score;
-                    leaderboard[1].candidate.name = votingBoard[i]
-                        .candidate
-                        .name;
-                    leaderboard[1].candidate.age = votingBoard[i].candidate.age;
-                    leaderboard[1].candidate.cult = votingBoard[i]
-                        .candidate
-                        .cult;
-                } else if (votingBoard[i].score > leaderboard[2].score) {
-                    leaderboard[2].score = votingBoard[i].score;
-                    leaderboard[2].candidate.name = votingBoard[i]
-                        .candidate
-                        .name;
-                    leaderboard[2].candidate.age = votingBoard[i].candidate.age;
-                    leaderboard[2].candidate.cult = votingBoard[i]
-                        .candidate
-                        .cult;
-                }
-                emit NewChallenger(leaderboard);
-            }
-        }
-        return leaderboard;
-    }
-
-    function vote(
-        address _wakanda,
-        uint256 _candidateId,
-        Candidate memory _candidate,
-        uint256 _amountOfVotes
-    ) public returns (bool success) {
-        uint256 wakandaTokenBalance = wknd.balanceOf(_wakanda);
+    function addCandidates(Candidate[] memory _candidates) public {
         require(
-            wakandaTokenBalance <= _amountOfVotes && wakandaTokenBalance > 0,
-            "Wakanda doesn't have permission to vote!"
+            msg.sender == owner,
+            "Only owner of contract can add candidate"
         );
+        require(candidates.length == 0, "Candidates are already added");
 
-        votingBoard[_candidateId].score += _amountOfVotes;
-        votingBoard[_candidateId].candidate.name = _candidate.name;
-        votingBoard[_candidateId].candidate.age = _candidate.age;
-        votingBoard[_candidateId].candidate.cult = _candidate.cult;
-
-        wakandaVote[_wakanda].voteFor = _candidate;
-        if (wakandaTokenBalance == _amountOfVotes) {
-            wakandaVote[_wakanda].hasVoted = true;
+        for (uint256 i = 0; i < _candidates.length; i++) {
+            candidates.push(_candidates[i]);
         }
-        wknd.updateWakandaAddressState(_wakanda, _amountOfVotes);
-
-        return true;
+        return;
     }
 
-    function isWakandaVote(address _wakanda)
-        public
+    function getCandidates() external view returns (Candidate[] memory) {
+        return candidates;
+    }
+
+    function getCandidatesSize() external view returns (uint256) {
+        return candidates.length;
+    }
+
+    function registration(address _wakanda) external {
+        require(
+            wknd.balanceOf(_wakanda) == votingToken,
+            "Wakanda doesn't have enaugh token to complete registration"
+        );
+        wakandaVoter[_wakanda].registered = true;
+        return;
+    }
+
+    function isWakandaRegistered(address _wakanda)
+        external
         view
         returns (bool success)
     {
-        return wakandaVote[_wakanda].hasVoted;
+        return wakandaVoter[_wakanda].registered;
     }
 
-    function swap(CandidateScore memory cs1, CandidateScore memory cs2)
-        private
-        pure
+    function isWakandaVoted(address _wakanda)
+        external
+        view
+        returns (bool success)
     {
-        cs1.score = cs2.score;
-        cs1.candidate.name = cs2.candidate.name;
-        cs1.candidate.age = cs2.candidate.age;
-        cs1.candidate.cult = cs2.candidate.cult;
+        return wakandaVoter[_wakanda].hasVoted;
+    }
+
+    function vote(
+        address _wakandaAddress,
+        uint256 _candidateId,
+        uint256 _amountOfVotes
+    ) external {
+        require(_wakandaAddress != owner, "Owner of contract could not vote");
+        require(_wakandaAddress == msg.sender, "You are not allowed to vote");
+        require(
+            !wakandaVoter[_wakandaAddress].hasVoted,
+            "These address already voted"
+        );
+        uint256 wakandaTokenBalance = wknd.balanceOf(_wakandaAddress);
+        require(
+            _amountOfVotes > 0 &&
+                wakandaTokenBalance > 0 &&
+                _amountOfVotes <= wakandaTokenBalance,
+            "Wakanda doesn't have enaugh balance to vote!"
+        );
+        require(candidates.length > 0, "There is no candidate to vote for");
+
+        wakandaVoter[_wakandaAddress].voteFor = _candidateId;
+
+        if (wakandaTokenBalance == _amountOfVotes) {
+            wakandaVoter[_wakandaAddress].hasVoted = true;
+        }
+
+        candidates[_candidateId].score += _amountOfVotes;
+
+        if (!isCandidateInLeaderboard(_candidateId)) {
+            updateLeaderboard(_candidateId);
+        }
+
+        wknd.burn(_wakandaAddress, _amountOfVotes);
+
+        return;
+    }
+
+    function updateLeaderboard(uint256 _candidateId) private {
+        uint256 size = leaderboard.length;
+        if (size < 3) {
+            leaderboard.push(_candidateId);
+            emit NewChallenger(leaderboard);
+        } else {
+            uint256 min = candidateWithLowestScoreInLeaderboard();
+            if (
+                candidates[_candidateId].score >
+                candidates[leaderboard[min]].score
+            ) {
+                leaderboard[min] = _candidateId;
+                emit NewChallenger(leaderboard);
+            }
+        }
+    }
+
+    function isCandidateInLeaderboard(uint256 _candidateId)
+        private
+        view
+        returns (bool)
+    {
+        for (uint256 i = 0; i < leaderboard.length; i++) {
+            if (leaderboard[i] == _candidateId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function candidateWithLowestScoreInLeaderboard()
+        private
+        view
+        returns (uint256)
+    {
+        uint256 min_i = 0;
+        for (uint256 i = 1; i < leaderboard.length; i++) {
+            if (
+                candidates[leaderboard[i]].score <=
+                candidates[leaderboard[min_i]].score
+            ) {
+                min_i = i;
+            }
+        }
+        return min_i;
+    }
+
+    function winningCandidates() external view returns (Candidate[] memory) {
+        Candidate[] memory winners = new Candidate[](leaderboard.length);
+        for (uint256 i = 0; i < leaderboard.length; i++) {
+            winners[i] = candidates[leaderboard[i]];
+        }
+        return winners;
     }
 }

@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 require("@nomiclabs/hardhat-ethers");
 
 const { 
@@ -21,20 +21,23 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 /**
- * @type import('hardhat/config').HardhatUserConfig
+ * @type import('hardhat/config").HardhatUserConfig
  */
 module.exports = {
   solidity: "0.8.4",
+  paths: {
+    artifacts: "../frontend/src/artifacts",
+  },
   networks: {
     localhost: {
       url: API_URL_LOCAL
     },
-    kovan: {
-      url: API_URL_KOVAN_ALCHEMY,
-      accounts: [`0x${PRIVATE_KEY_KOVAN}`]
-    }
-    // hardhat: {
-    //   chainId: 1337
+    // kovan: {
+    //   url: API_URL_KOVAN_ALCHEMY,
+    //   accounts: [`0x${PRIVATE_KEY_KOVAN}`]
     // }
+    hardhat: {
+      chainId: 1337
+    }
   }
 };

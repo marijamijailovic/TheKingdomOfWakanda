@@ -4,11 +4,6 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 const hre = require("hardhat");
-const axios = require('axios');
-
-const CANDIDATES_LIST = {
-  URL: "https://wakanda.zmilos.com/list"
-}
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -23,25 +18,17 @@ async function main() {
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
   // We get the contract to deploy
-  const WakandaToken = await hre.ethers.getContractFactory("WakandaToken");
-  const wakandaToken = await WakandaToken.deploy();
+  const WKNDToken = await hre.ethers.getContractFactory("WKNDToken");
+  const wknd = await WKNDToken.deploy(6000000);
 
-  console.log("WakandaToken deployed to:", wakandaToken.address);
-
-  const response = await axios({
-    method: "get", 
-    headers: {"Content-Type": "application/json"}, 
-    url: CANDIDATES_LIST.URL
-  });
+  console.log("WakandaToken deployed to:", wknd.address);
   
-  if(response && response.data && response.data.candidates) {   
-    const Voting = await hre.ethers.getContractFactory("Voting");
-    const voting = await Voting.deploy(wakandaToken.address, response.data.candidates);
+  const Voting = await hre.ethers.getContractFactory("Voting");
+  const voting = await Voting.deploy(wknd.address);
 
-    await voting.deployed();
+  await voting.deployed();
 
-    console.log("Voting deployed to:", voting.address); 
-  }
+  console.log("Voting deployed to:", voting.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
