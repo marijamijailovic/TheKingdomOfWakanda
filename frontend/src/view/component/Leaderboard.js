@@ -1,30 +1,29 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Table, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import {  candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/candidatesSlice";
+import { globalConstants } from "../../constants/global";
+import {  candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
 import { getWinningCandidates } from "../../redux/actions/candidatesActions";
+import Message from "./Message";
 
 const Leaderboard = (props) => {
     const dispatch = useDispatch();
+
     const gettingLeaderboardLoading = useSelector(candidatesLoading);
     const gettingLeaderboardHasError = useSelector(candidatesHasErrors);
     const leaderboardData = useSelector(candidatesData);
     const gettingLeaderboardError = useSelector(candidatesError);
-    
-    const onClickLeaderboardHandler = () => {
-        dispatch(getWinningCandidates());
-    }
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(getWinningCandidates());
-    },[dispatch])
+    }, [dispatch])
 
     return (
         <>
-            <Button variant="success" size="lg" onClick={() => onClickLeaderboardHandler()}>Show leads</Button>
-            {gettingLeaderboardLoading && <p>Loading...</p>}
+            <h3>Winners candidate</h3>
+            {gettingLeaderboardLoading && <Message message={globalConstants.LOADING}/>}
             {gettingLeaderboardHasError ?
-                <p>{gettingLeaderboardError}</p> : 
+                <Message message={gettingLeaderboardError}/> : 
                 <Table striped bordered hover size="sm">
                     <thead>
                         <tr>
@@ -35,8 +34,8 @@ const Leaderboard = (props) => {
                             <th>Score</th>
                         </tr>
                     </thead>
-                    {/* These is hardcoded because receving format from sc is Array[Array(Candidate) without field name]  and the length is 3*/}
-                    {leaderboardData && leaderboardData.response && leaderboardData.response.map((d, index) =>{
+                    {/* These is hardcoded because receving format from sc is Array without field name and the order is name, age,cult, score*/}
+                    {leaderboardData.response && leaderboardData.response.map((d, index) =>{
                         return <tbody key={index}>
                                 <tr>
                                     <td>{index}</td>

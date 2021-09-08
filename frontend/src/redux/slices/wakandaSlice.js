@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { initialState } from "./state";
-import { request, success, failure} from "./actions/actionsType";
+import { initialState } from "../state";
+import { request, success, failure} from "../actions/actionsType";
 
 export const wakandaSlice = createSlice({
   name: "wakanda",
@@ -12,7 +12,6 @@ export const wakandaSlice = createSlice({
   },
 })
 
-// Action creators are generated for each case reducer function
 export const { wakandaRequest, wakandaSuccess, wakandaFailure } = wakandaSlice.actions;
 
 export const wakandaLoading = state => state.wakanda.loading;

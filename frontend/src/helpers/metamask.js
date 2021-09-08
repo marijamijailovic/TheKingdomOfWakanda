@@ -5,8 +5,8 @@ export const connectToMetaMask = async () => {
     if(window.ethereum) {
         setItem(globalConstants.WEB3_SUPPORT, true);
         try {
-            const account = await window.ethereum.request({ method: "eth_requestAccounts" });
-            return account[0];
+            const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+            return accounts[0];
         } catch (error) {
             throw new Error(error.message);
         }
@@ -14,10 +14,4 @@ export const connectToMetaMask = async () => {
         setItem(globalConstants.WEB3_SUPPORT, false);
         return;
     }
-}
-
-export const metaMaskAccountChange = () => {
-    window.ethereum.on("accountsChanged", function (accounts) {
-        setItem(globalConstants.META_MASK_ACCOUNT, accounts[0]);
-    })
 }

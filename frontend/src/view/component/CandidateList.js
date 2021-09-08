@@ -1,30 +1,46 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Table, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { globalConstants } from "../../constants/global";
-import {  candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/candidatesSlice"
+import { getCandidates } from "../../services/adminService";
+import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
 import { addAllCandidates } from "../../redux/actions/candidatesActions";
 import Message from "./Message";
 
 const CandidateList = (props) => {
     const dispatch = useDispatch();
+
     const addingCandidatesLoading = useSelector(candidatesLoading);
     const addingCandidatesHasErrors = useSelector(candidatesHasErrors);
     const addingCandidateResponse = useSelector(candidatesData);
     const addingCandidatesError = useSelector(candidatesError);
     
+    const [errorMessage, setErrorMessage] = useState();
+    const [candidateList, setCandidatesList] = useState();
 
-    const onClickAddCandidatesHandler = () => {
-        const size = props.candidateData.length;
-        const allCanidadtes = [];
-        for(let i=0;i<size;i++){
-            allCanidadtes.push({...props.candidateData[i], score:0, id: i});
+    useEffect(() => {
+        const fetchAllCandidates = async() => {
+            const response = await getCandidates();
+            if(response && response.OK) {
+                setCandidatesList(response.Data.candidates);
+            } else {
+                setErrorMessage(response.ErrorText);
+            }
         }
-        dispatch(addAllCandidates(allCanidadtes));
+        fetchAllCandidates();
+    },[]);
+
+    if(errorMessage) {
+        return <Message message={errorMessage} />
     }
 
-    if(addingCandidateResponse && addingCandidateResponse.status === globalConstants.SUCCESS) {
-        return <Message message={globalConstants.SUCCESS_ADDING_CANDIDATES}/>
+    const onClickAddCandidatesHandler = () => {
+        const size = candidateList.length;
+        const allCanidadtes = [];
+        for(let i=0;i<size;i++){
+            allCanidadtes.push({...candidateList[i], score:0, id: i});
+        }
+        dispatch(addAllCandidates(allCanidadtes));
     }
 
     return (
@@ -38,7 +54,7 @@ const CandidateList = (props) => {
                         <th>Cult</th>
                     </tr>
                 </thead>
-                {props.candidateData && props.candidateData.map((data, index) =>{
+                {candidateList && candidateList.map((data, index) =>{
                     return <tbody key={index}>
                             <tr>
                                 <td>{index}</td>
@@ -50,8 +66,14 @@ const CandidateList = (props) => {
                 })}
             </Table>
             <Button variant="success" size="lg" onClick={ onClickAddCandidatesHandler }>Add Candidates</Button>
-            {addingCandidatesLoading && <p>Loading...</p>}
-            {addingCandidatesHasErrors && <p>{addingCandidatesError}</p>}
+            {addingCandidatesLoading && <Message message={globalConstants.LOADING}/>}
+            {addingCandidatesHasErrors ? 
+                <Message message={addingCandidatesError}/> 
+                : 
+                addingCandidateResponse.response ?
+                    <Message message={`${globalConstants.SUCCESS_ADDING_CANDIDATES}, ${addingCandidateResponse.response.transactionHash}`} /> 
+                    : 
+                    <Message message={addingCandidateResponse.reason}/>}
         </>
     )
 }

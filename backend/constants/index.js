@@ -8,6 +8,7 @@ const MESSAGE = {
     
     ALREADY_REGISTERED: "Wakanda has been registered already",
     ALREADY_VOTED: "Wakanda has been voted already",
+    ALREADY_ADDED: "Already added",
 
     SUCCESS_REGISTRATION: "Wakanda successfully registred"
 }

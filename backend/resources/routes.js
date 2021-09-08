@@ -10,10 +10,13 @@ routes = (app) => {
     });
 
     app.post("/addCandidates", adminController.addCandidates);
+    app.post("/addDelegators", adminController.addDelegators);
     app.post("/registration", wakandaController.wakandaRegistration);
+
     app.get("/balance", wakandaController.getBalance);
     app.get("/leaderboard", wakandaController.getWinningCandidates);
     app.get("/getCandidates", wakandaController.getCandidates);
+    app.get("/getDelegators", wakandaController.getDelegators);
 }
 
 module.exports = routes;

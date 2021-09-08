@@ -1,5 +1,5 @@
 import * as wakandaService from "../../services/wakandaService";
-import { wakandaRequest, wakandaSuccess, wakandaFailure } from "../wakandaSlice";
+import { wakandaRequest, wakandaSuccess, wakandaFailure } from "../slices/wakandaSlice";
 
 export function wakandaRegistration(wakandaAddress) {
     return async dispatch => {
@@ -17,7 +17,6 @@ export function wakandaRegistration(wakandaAddress) {
     }
 }
   
-// Asynchronous thunk action
 export function getBalanceOf(wakandaAddress) {
     return async dispatch => {
         dispatch(wakandaRequest())

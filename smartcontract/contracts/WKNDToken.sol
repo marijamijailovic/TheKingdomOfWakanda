@@ -13,9 +13,20 @@ contract WKNDToken is ERC20 {
         return 0;
     }
 
-    function burn(address _address, uint256 amount) public {
+    function burn(address _address, uint256 _amount) public {
         require(_address != address(0), "Could not be zero address");
-        require(amount > 0, "Could not burn zero tokens");
-        _burn(_address, amount);
+        require(_amount > 0, "Could not burn zero tokens");
+        _burn(_address, _amount);
+    }
+
+    function transfer(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) public {
+        require(_from != address(0), "From can't be zero address");
+        require(_to != address(0), "To can't be zero address");
+        require(_amount > 0 && balanceOf(_from) >= _amount, "No enaugh tokens");
+        _transfer(_from, _to, _amount);
     }
 }

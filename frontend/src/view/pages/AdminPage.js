@@ -1,33 +1,42 @@
-import React, {useState, useEffect} from "react";
-import { getCandidates } from "../../services/adminService";
-import Message from "../component/Message";
+import React, {useState} from "react";
+import { Nav } from "react-bootstrap";
 import CandidateList from "../component/CandidateList";
+import AddDelegator from "../component/AddDelegator";
 
-const WelcomePage = () => {
-    const [candidateList, setCandidatesList] = useState();
-    const [errorMessage, setErrorMessage] = useState();
-    
-    useEffect(() => {
-        const fetchAllCandidates = async() => {
-            const response = await getCandidates();
-            if(response && response.OK) {
-                setCandidatesList(response.Data.candidates);
-            } else {
-                setErrorMessage(response.ErrorText);
-            }
+const AdminPage = () => {
+    const [showAddCandidates, setShowAddCandidates] = useState(false);
+    const [showAddDelegators, setShowAddDelegators] = useState(false);
+
+    const onSelectNavigationHandler = (selectedKey) =>{
+        if(selectedKey === "add-candidates") {
+            setShowAddDelegators(false);
+            setShowAddCandidates(true);
+        } else if(selectedKey === "add-delegators") {
+            setShowAddCandidates(false);
+            setShowAddDelegators(true);
+        } else {
+            setShowAddCandidates(false);
+            setShowAddDelegators(false);
         }
-        fetchAllCandidates();
-    },[]);
-
-    if(errorMessage) {
-        return <Message message={errorMessage} />
     }
 
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
-            <CandidateList candidateData={candidateList} />
+            <Nav activeKey="/admin" onSelect={(selectedKey) => onSelectNavigationHandler(selectedKey)}>
+                {/* <Nav.Item>
+                <Nav.Link href="/admin">Active</Nav.Link>
+                </Nav.Item> */}
+                <Nav.Item>
+                    <Nav.Link eventKey="add-candidates">Add Candidates</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link eventKey="add-delegators">Add Delegators</Nav.Link>
+                </Nav.Item>
+            </Nav>
+            {showAddCandidates && <CandidateList />}
+            {showAddDelegators && <AddDelegator />}
         </div>
     );
 };
 
-export default WelcomePage;
+export default AdminPage;

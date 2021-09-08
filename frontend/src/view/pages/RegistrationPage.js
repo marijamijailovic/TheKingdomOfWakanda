@@ -2,48 +2,52 @@ import React, {useEffect, useState} from "react";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { isValidWakandaAddresses } from "../../helpers/utils";
-import { connectToMetaMask, metaMaskAccountChange } from "../../helpers/metamask";
+import { connectToMetaMask } from "../../helpers/metamask";
 import { getItem, setItem } from "../../helpers/storage";
 import { Redirect } from "react-router-dom";
-import { wakandaData, wakandaHasErrors, wakandaLoading, wakandaError } from "../../redux/wakandaSlice";
+import { wakandaData, wakandaHasErrors, wakandaLoading, wakandaError } from "../../redux/slices/wakandaSlice";
 import { wakandaRegistration } from "../../redux/actions/wakandaActions";
+import { connectAccount } from "../../redux/slices/connectedAccountSlice";
 import Message from "../component/Message";
 import { globalConstants } from "../../constants/global";
 
 const RegistrationPage = (props) => {
     const dispatch = useDispatch();
+    
+    const web3Support = getItem(globalConstants.WEB3_SUPPORT);
+    const connectedAccount = useSelector(state => state.connectedAccount.account);
+    
     const registrationLoading = useSelector(wakandaLoading);
     const registrationHasErrors = useSelector(wakandaHasErrors);
     const registrationData = useSelector(wakandaData);
     const registrationError = useSelector(wakandaError);
-    const web3Support = getItem(globalConstants.WEB3_SUPPORT);
-    const connectedAccount = getItem(globalConstants.META_MASK_ACCOUNT);
-    const [account, setAccount] = useState(connectedAccount);
+
     const [wakandaAddress, setWakandaAddress] = useState(connectedAccount);
     const [invalidAddress, setInvalidAddress] = useState(false);
 
     useEffect(()=>{
         const connect = async() => {
-            const acc = await connectToMetaMask();
-            if(acc){
-                setItem(globalConstants.META_MASK_ACCOUNT, acc);
-                setAccount(acc);
-            }
+            const account = await connectToMetaMask();
+            dispatch(connectAccount(account));
+            setWakandaAddress(account);
         }
         connect()
-    },[]);
+    },[dispatch]);
 
     useEffect(()=>{
         if(web3Support){
-            metaMaskAccountChange();
-            setAccount(getItem(globalConstants.META_MASK_ACCOUNT));
-            setWakandaAddress(getItem(globalConstants.META_MASK_ACCOUNT));
+            window.ethereum.on("accountsChanged", function (accounts) {
+                dispatch(connectAccount(accounts[0]));
+                setItem(globalConstants.META_MASK_ACCOUNT, accounts[0]);
+                setWakandaAddress(accounts[0]);
+            });
         }
-    },[account, web3Support])
+    },[connectedAccount, web3Support, dispatch])
 
     useEffect(()=>{
+        dispatch(connectAccount(wakandaAddress));
         setItem(globalConstants.META_MASK_ACCOUNT, wakandaAddress);
-    },[wakandaAddress]);
+    },[wakandaAddress, dispatch]);
 
     function onWakandaAddressChange(e) {
         setInvalidAddress(false);
@@ -64,7 +68,7 @@ const RegistrationPage = (props) => {
         return <Message message={globalConstants.NOT_WEB3_BROWSER} />
     }
 
-    if(registrationData && registrationData.reason !== globalConstants.ALREADY_VOTED){
+    if(registrationData.response || registrationData.reason === globalConstants.ALREADY_REGISTERED){
         return <Redirect to="/voting"/>
     }
 
@@ -84,8 +88,12 @@ const RegistrationPage = (props) => {
                     </Button>
                 </Form.Group>
             </Form>
-            {registrationLoading && <p>Loading...</p>}
-            {registrationHasErrors ? <p>{registrationError}</p> : registrationData && <p>{registrationData.reason}</p>}
+            {registrationLoading && <Message message={globalConstants.LOADING} />}
+            {registrationHasErrors ? 
+                <Message message={registrationError} /> 
+                : 
+                registrationData.reason && <Message message={registrationData.reason} />
+            }
         </div>
     );
 };

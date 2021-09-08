@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { initialState } from "./state";
-import { request, success, failure} from "./actions/actionsType";
+import { initialState } from "../state";
+import { request, success, failure} from "../actions/actionsType";
 
 export const votingSlice = createSlice({
   name: "voting",
@@ -12,7 +12,6 @@ export const votingSlice = createSlice({
   },
 })
 
-// Action creators are generated for each case reducer function
 export const { voteRequest, voteSuccess, voteFailure } = votingSlice.actions;
 
 export const votingLoading = state => state.voting.loading;

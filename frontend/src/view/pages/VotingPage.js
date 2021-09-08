@@ -4,23 +4,30 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../component/Message";
 import { globalConstants } from "../../constants/global";
 import { getItem } from "../../helpers/storage";
-import { wakandaData, wakandaHasErrors, wakandaError } from "../../redux/wakandaSlice";
+import { wakandaData, wakandaHasErrors, wakandaError } from "../../redux/slices/wakandaSlice";
 import { getBalanceOf } from "../../redux/actions/wakandaActions";
-import { votingData, votingHasErrors, votingError } from "../../redux/votingSlice";
+
 import Delegation from "../component/Delegation";
 import VotingComponent from "../component/VotingComponent";
 import Leaderboard from "../component/Leaderboard";
+import { isEmpty } from "../../helpers/utils";
+import { votingData, votingHasErrors, votingError } from "../../redux/slices/votingSlice";
 
 const VotingPage = (props) => {
     const dispatch = useDispatch();
+    
+    const connectedAccount = useSelector(state => state.connectedAccount.account);
+    const wakandaAddress = !isEmpty(connectedAccount) ? connectedAccount : getItem(globalConstants.META_MASK_ACCOUNT);
+    
     const gettingBalanceHasError = useSelector(wakandaHasErrors);
     const balanceData = useSelector(wakandaData);
     const gettingBalanceError = useSelector(wakandaError);
+
     const sendingVoteHasErrors = useSelector(votingHasErrors);
-    const sendingVoteResponse = useSelector(votingData);
+    const voteResponse = useSelector(votingData);
     const sendingVoteError = useSelector(votingError);
-    const wakandaAddress = getItem(globalConstants.META_MASK_ACCOUNT);
-    const balanceOfWKND = balanceData ? +balanceData.response : 0;
+    
+    const balanceOfWKND = balanceData && balanceData.response ? +balanceData.response : 0;
     const [wantToVote, setWantToVote] = useState(true);
 
     useEffect(()=>{
@@ -40,33 +47,34 @@ const VotingPage = (props) => {
         return <Message message={sendingVoteError} />;
     }
 
-    if(gettingBalanceHasError) {
-        return <Message message={gettingBalanceError} />;
-    }
-
-    if(sendingVoteResponse || balanceOfWKND === 0) {
-        return <Leaderboard />;
+    if(voteResponse.transactionHash) {
+        return (
+            <div>
+                <Message message={`Success tx is: ${voteResponse.transactionHash}`} />;
+                <Leaderboard />
+            </div>)
     }
 
     return (
         <>
             <h2>Welcome to voting page</h2>
+            {balanceOfWKND === 0 && <Leaderboard />}
             {wakandaAddress && balanceOfWKND > 0 &&
-                <div>
-                    <p>{`Your voting address is ${wakandaAddress}, and you can send up to ${balanceOfWKND} vote!`}</p>
-                    <Form>
-                        <Form.Check.Input type="radio" value={true} name="vote" checked={wantToVote} onChange={onChangeRadioButtonHandler}/>
-                        <Form.Check.Label>Vote</Form.Check.Label>
-                        
-                        <Form.Check.Input type="radio" value={false} name="vote" checked={!wantToVote} onChange={onChangeRadioButtonHandler}/>
-                        <Form.Check.Label>Delegate</Form.Check.Label>
-                    </Form>
-                    {wantToVote ? 
-                        <VotingComponent wakandaAddress={wakandaAddress}/>
-                        : 
-                        <Delegation wakandaAddress={wakandaAddress}/>
-                    }
-                </div>        
+                    <div>
+                        <label>{`Your voting address is ${wakandaAddress}, and you can send up to ${balanceOfWKND} vote!`}</label>
+                        <Form>
+                            <Form.Check.Input type="radio" value={true} name="vote" checked={wantToVote} onChange={onChangeRadioButtonHandler}/>
+                            <Form.Check.Label>Vote</Form.Check.Label>
+                            
+                            <Form.Check.Input type="radio" value={false} name="vote" checked={!wantToVote} onChange={onChangeRadioButtonHandler}/>
+                            <Form.Check.Label>Delegate</Form.Check.Label>
+                        </Form>
+                        {wantToVote ? 
+                            <VotingComponent wakandaAddress={wakandaAddress} balanceOfWKND={balanceOfWKND}/>
+                            : 
+                            <Delegation wakandaAddress={wakandaAddress}/>
+                        }   
+                    </div>
             }
         </>
     )

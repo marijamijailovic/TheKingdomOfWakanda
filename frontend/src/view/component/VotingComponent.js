@@ -1,70 +1,93 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button,  Row, Col } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import InputNumber from "rc-input-number";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "./Message";
+import { globalConstants } from "../../constants/global";
 import { getAllCandidates } from "../../redux/actions/candidatesActions";
 import { vote } from "../../redux/actions/votingAction";
-import { wakandaData, wakandaHasErrors, wakandaError } from "../../redux/wakandaSlice";
-import { getBalanceOf } from "../../redux/actions/wakandaActions";
-import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/candidatesSlice";
+import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
 
 const VotingComponent = (props) => {
-    const {wakandaAddress} = props;
+    const {wakandaAddress, balanceOfWKND} = props;
     const dispatch = useDispatch();
-    const gettingBalanceHasError = useSelector(wakandaHasErrors);
-    const balanceData = useSelector(wakandaData);
-    const gettingBalanceError = useSelector(wakandaError);
+    
     const gettingCandidatesLoading = useSelector(candidatesLoading);
     const gettingCandidatesHasErrors = useSelector(candidatesHasErrors);
     const allCandidatesList = useSelector(candidatesData);
     const gettingCandidatesError = useSelector(candidatesError);
 
-    const balanceOfWKND = balanceData ? +balanceData.response : 0;
     const [amountOfVotes, setAmountOfVotes] = useState(balanceOfWKND);
+    const [selectedPresident, setSelectedPresident] = useState("-1");
+    const [invalidCandidate, setInvalidCandidate] = useState(false);
 
     useEffect(()=>{
-        dispatch(getBalanceOf(wakandaAddress));
         dispatch(getAllCandidates());
-    },[wakandaAddress, dispatch]);
+    },[dispatch]);
 
-    const onClickVoteHandler = (e, candidateId) => {
-        e.preventDefault(); 
-        dispatch(vote(wakandaAddress, candidateId, amountOfVotes));
+    function onPresidentChangeHandler(event) {
+        setInvalidCandidate(false);
+        const choosenPresident = event.target.value;
+        setSelectedPresident(choosenPresident);
     }
 
-    if(gettingBalanceHasError) {
-        return <Message message={gettingBalanceError} />;
+    function handleSubmit(event) {
+        try{
+            event.preventDefault();
+            if(selectedPresident === "-1") {
+                setInvalidCandidate(true);
+            } else {
+                dispatch(vote(wakandaAddress, selectedPresident, amountOfVotes));
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    if(gettingCandidatesHasErrors) {
+        return <Message message={gettingCandidatesError} />;
     }
 
     return (
-        <>
-            {gettingCandidatesLoading && <p>Loading...</p>}
-            {gettingCandidatesHasErrors ?
-                <p>{gettingCandidatesError}</p> 
-                : 
-                <Row xs={1} md={2} className="g-4">
-                    {allCandidatesList && allCandidatesList.response && allCandidatesList.response.map((candidate, index) => {
-                        return <Col key={index}>
-                                <Card className="text-center" border="dark">
-                                    <Card.Header>
-                                        {/* These is hardcoded because receving format from sc is Array[Array(Candidate) without field name]  and the length is 5(name,age,cult,score,id)*/}
-                                        {`${candidate[0]}, ${candidate[1]} years old, from ${candidate[2]}`}
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Card.Text>
-                                            Number of votes:
-                                            <InputNumber min={1} max={balanceOfWKND} defaultValue={balanceOfWKND} value={amountOfVotes} onChange={setAmountOfVotes}/>
-                                        </Card.Text>
-                                        <Button variant="success" size="lg" onClick={(e)=>onClickVoteHandler(e,candidate[4])}>Vote</Button>
-                                    </Card.Body>
-                                </Card>
-                            </Col> 
-                        })
-                    }
-                </Row>
-            }
-        </>
+        <div className = "c-app c-default-layout flex-row align-items-center">
+            <Form>
+                <Form.Group>
+                    <Form.Label htmlFor="wakandaAddress">Your address</Form.Label>
+                    <Form.Control type="text" name="wakandaAddress" value={wakandaAddress} required readOnly /> 
+                </Form.Group>
+                {gettingCandidatesLoading ? 
+                    <Message message={globalConstants.LOADING}/> :
+                    <Form.Group controlId="delegator">
+                        <Form.Label>Choose your wakanda presidend</Form.Label>
+                        <Form.Control 
+                            required
+                            isInvalid={invalidCandidate}
+                            type="text"
+                            as="select"
+                            onChange={onPresidentChangeHandler}
+                            name="delegator">
+                            <option value={"-1"}>Open to select president</option>
+                            {allCandidatesList.response && allCandidatesList.response.map((candidate,index)=>{
+                                    return <option key={index} value={candidate[4]}>{`${candidate[0]}, age ${candidate[1]}, ${candidate[2]}`}</option>
+                                })
+                            }
+                        </Form.Control>
+                        <Form.Control.Feedback type="invalid">
+                            Invalid address
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                }
+                <Form.Group>
+                    <Form.Label htmlFor="balanceOfWakanda">Your amount of vote:</Form.Label>
+                    <InputNumber min={1} max={balanceOfWKND} defaultValue={balanceOfWKND} value={amountOfVotes} onChange={setAmountOfVotes}/>
+                </Form.Group>
+                <Form.Group>
+                    <Button variant="success" type="submit" onClick={handleSubmit}>
+                        Vote   
+                    </Button>
+                </Form.Group>
+            </Form>
+        </div> 
     )
 }
 

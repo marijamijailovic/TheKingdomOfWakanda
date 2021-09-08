@@ -1,10 +1,11 @@
-export default function ErrorMessage({ message }) {
-    if (!message) return null;
-  
+import React from "react";
+
+const Message = (props) => {
     return (
-      <div className="alert alert-error mt-5">
-          <label>{message}</label>
-      </div>
+        <div>
+            {props.message}
+        </div>
     );
-  }
-  
+};
+
+export default Message;

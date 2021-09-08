@@ -9,11 +9,8 @@ const wakandaRegistration = async (req, res) => {
         if(wakandaAddress){
             const registered = await voting.isWakandaRegistered(wakandaAddress);
             if(!registered) {
-                const transferSuccess = await wkndToken.transferForVoting(wakandaAddress, votingToken);
-                if(transferSuccess) {
-                    const response = await voting.finishRegistration(wakandaAddress);
-                    res.status(200).json({"status":"success", "reason": constants.MESSAGE.SUCCESS_REGISTRATION });
-                }
+                const response = await voting.registration(wakandaAddress, votingToken);
+                res.status(200).json({"status":"success", response});
             } else {
                 const voted = await voting.isWakandaVoted(wakandaAddress);
                 if(!voted){
@@ -53,6 +50,16 @@ const getCandidates = async(req, res) => {
     }
 }
 
+const getDelegators = async(req, res) => {
+    try{
+        const response = await voting.getDelegators();
+        res.status(200).json({"status":"success", response});
+    } catch (error) {
+        res.status(500).json({"status":"failed", "reason": error.message});
+    }
+}
+
+
 const getWinningCandidates = async (req,res) => {
     try {
         const winners = await voting.getWinningCandidates();
@@ -68,5 +75,6 @@ module.exports = {
     wakandaRegistration,
     getBalance,
     getCandidates,
-    getWinningCandidates
+    getDelegators,
+    getWinningCandidates,
 }
