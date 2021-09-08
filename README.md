@@ -36,3 +36,5 @@ Run frontend:
   ```navigate to frontend folder(cd frontend)```
   ```npm install```
   ```npm start```
+
+First go to /admin page to add candidates and delegator for voting, after that you could go to / and vote.
