@@ -1,18 +1,19 @@
 const wkndToken = require("../../contract/wkndToken");
 const voting = require("../../contract/voting");
 const constants = require("../../constants");
+const helpers = require("../helpers/utils");
 
 const wakandaRegistration = async (req, res) => { 
     try {
         const wakandaAddress = req.body.wakandaAddress;
         const votingToken = 1;
         if(wakandaAddress){
-            const registered = await voting.isWakandaRegistered(wakandaAddress);
+            const registered = await helpers.isRegistered(wakandaAddress);
             if(!registered) {
                 const response = await voting.registration(wakandaAddress, votingToken);
                 res.status(200).json({"status":"success", response});
             } else {
-                const voted = await voting.isWakandaVoted(wakandaAddress);
+                const voted = await helpers.isVoted(wakandaAddress);
                 if(!voted){
                     res.status(200).json({"status":"success", "reason": constants.MESSAGE.ALREADY_REGISTERED});
                 } else {
@@ -27,11 +28,13 @@ const wakandaRegistration = async (req, res) => {
     }
 }
 
-const getBalance = async (req,res)=>{
+const getWakandaStatus = async (req,res)=>{
     try {
         const wakandaAddress = req.query.wakandaAddress;
         if(wakandaAddress){
-            const response = await wkndToken.getBalance(wakandaAddress);
+            const balance = await wkndToken.getBalance(wakandaAddress);
+            const registered = await helpers.isRegistered(wakandaAddress);
+            const response = {balance, registered};
             res.status(200).json({"status":"success", response});
         }else{
             res.status(400).json({"status":"failed", "reason": constants.MESSAGE.WRONG_INPUT});
@@ -73,7 +76,7 @@ const getWinningCandidates = async (req,res) => {
 
 module.exports = {
     wakandaRegistration,
-    getBalance,
+    getWakandaStatus,
     getCandidates,
     getDelegators,
     getWinningCandidates,

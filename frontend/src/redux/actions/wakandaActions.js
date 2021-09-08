@@ -17,11 +17,11 @@ export function wakandaRegistration(wakandaAddress) {
     }
 }
   
-export function getBalanceOf(wakandaAddress) {
+export function getWakandaStatus(wakandaAddress) {
     return async dispatch => {
         dispatch(wakandaRequest())
         try {
-        const response = await wakandaService.getBalanceOf(wakandaAddress);
+        const response = await wakandaService.getWakandaStatus(wakandaAddress);
         if(response.OK) {
             dispatch(wakandaSuccess(response.Data));
         } else {

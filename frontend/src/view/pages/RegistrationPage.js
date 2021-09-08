@@ -2,20 +2,19 @@ import React, {useEffect, useState} from "react";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { isValidWakandaAddresses } from "../../helpers/utils";
-import { connectToMetaMask } from "../../helpers/metamask";
 import { getItem, setItem } from "../../helpers/storage";
 import { Redirect } from "react-router-dom";
 import { wakandaData, wakandaHasErrors, wakandaLoading, wakandaError } from "../../redux/slices/wakandaSlice";
 import { wakandaRegistration } from "../../redux/actions/wakandaActions";
-import { connectAccount } from "../../redux/slices/connectedAccountSlice";
 import Message from "../component/Message";
 import { globalConstants } from "../../constants/global";
 
 const RegistrationPage = (props) => {
     const dispatch = useDispatch();
     
+    const connectedAccount = getItem(globalConstants.META_MASK_ACCOUNT);
     const web3Support = getItem(globalConstants.WEB3_SUPPORT);
-    const connectedAccount = useSelector(state => state.connectedAccount.account);
+    //const connectedAccount = useSelector(state => state.connectedAccount.account);
     
     const registrationLoading = useSelector(wakandaLoading);
     const registrationHasErrors = useSelector(wakandaHasErrors);
@@ -25,19 +24,19 @@ const RegistrationPage = (props) => {
     const [wakandaAddress, setWakandaAddress] = useState(connectedAccount);
     const [invalidAddress, setInvalidAddress] = useState(false);
 
-    useEffect(()=>{
-        const connect = async() => {
-            const account = await connectToMetaMask();
-            dispatch(connectAccount(account));
-            setWakandaAddress(account);
-        }
-        connect()
-    },[dispatch]);
+    // useEffect(()=>{
+    //     const connect = async() => {
+    //         const account = await connectToMetaMask();
+    //         dispatch(connectAccount(account));
+    //         setWakandaAddress(account);
+    //     }
+    //     connect()
+    // },[dispatch]);
 
     useEffect(()=>{
         if(web3Support){
             window.ethereum.on("accountsChanged", function (accounts) {
-                dispatch(connectAccount(accounts[0]));
+                //dispatch(connectAccount(accounts[0]));
                 setItem(globalConstants.META_MASK_ACCOUNT, accounts[0]);
                 setWakandaAddress(accounts[0]);
             });
@@ -45,7 +44,7 @@ const RegistrationPage = (props) => {
     },[connectedAccount, web3Support, dispatch])
 
     useEffect(()=>{
-        dispatch(connectAccount(wakandaAddress));
+        //dispatch(connectAccount(wakandaAddress));
         setItem(globalConstants.META_MASK_ACCOUNT, wakandaAddress);
     },[wakandaAddress, dispatch]);
 

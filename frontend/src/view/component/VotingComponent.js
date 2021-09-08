@@ -32,15 +32,11 @@ const VotingComponent = (props) => {
     }
 
     function handleSubmit(event) {
-        try{
-            event.preventDefault();
-            if(selectedPresident === "-1") {
-                setInvalidCandidate(true);
-            } else {
-                dispatch(vote(wakandaAddress, selectedPresident, amountOfVotes));
-            }
-        } catch (error) {
-            console.log(error.message);
+        event.preventDefault();
+        if(selectedPresident === "-1") {
+            setInvalidCandidate(true);
+        } else {
+            dispatch(vote(wakandaAddress, selectedPresident, amountOfVotes));
         }
     }
 

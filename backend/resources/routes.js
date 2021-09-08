@@ -13,7 +13,7 @@ routes = (app) => {
     app.post("/addDelegators", adminController.addDelegators);
     app.post("/registration", wakandaController.wakandaRegistration);
 
-    app.get("/balance", wakandaController.getBalance);
+    app.get("/getWakandaStatus", wakandaController.getWakandaStatus);
     app.get("/leaderboard", wakandaController.getWinningCandidates);
     app.get("/getCandidates", wakandaController.getCandidates);
     app.get("/getDelegators", wakandaController.getDelegators);

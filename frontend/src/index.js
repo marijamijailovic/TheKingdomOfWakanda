@@ -5,6 +5,9 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import {store} from "./redux/store";
+import {metaMaskConnect} from "./redux/slices/metamaskSlice";
+
+store.dispatch(metaMaskConnect());
 
 ReactDOM.render(
   <Provider store={store}>

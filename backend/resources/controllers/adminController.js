@@ -20,9 +20,7 @@ const addDelegators = async (req, res) => {
     try {
         const delegatorAddress = req.body.delegatorAddress;
         const allDelegators = await voting.getDelegators();
-        console.log(allDelegators);
         const result = allDelegators.some(delegator => delegator === delegatorAddress);
-        console.log(result);
         if(result) {
             res.status(200).json({"status":"success", "reason": constants.MESSAGE.ALREADY_ADDED});
         } else {
