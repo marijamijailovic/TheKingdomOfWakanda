@@ -163,18 +163,15 @@ contract Voting {
             "Owner of contract could not delegate"
         );
         require(
-            _wakandaAddress != _delegatorAddress,
-            "Self delegation is not allowed"
+            _wakandaAddress != _delegatorAddress &&
+                !wakandaVoter[_wakandaAddress].isDelegator,
+            "Delegation form delegator to delegator is not allowed"
         );
         require(
             wakandaVoter[_wakandaAddress].delegateTo == address(0) &&
                 wakandaVoter[_wakandaAddress].registered &&
                 !wakandaVoter[_wakandaAddress].hasVoted,
             "Wakanda can't delegate vote"
-        );
-        require(
-            !wakandaVoter[_wakandaAddress].isDelegator,
-            "Delegation form delegator to delegator is not allowed"
         );
 
         uint256 balanceOfWakanda = wknd.balanceOf(_wakandaAddress);
@@ -186,7 +183,7 @@ contract Voting {
         require(
             _delegatorAddress != address(0) &&
                 wakandaVoter[_delegatorAddress].isDelegator,
-            "Delegator addres is not valid"
+            "Delegator address is not valid"
         );
 
         wakandaVoter[_wakandaAddress].hasVoted = true;

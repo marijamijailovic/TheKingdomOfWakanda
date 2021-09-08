@@ -10,7 +10,6 @@ export function vote(wakandaAddress, candidateId, amountOfVotes) {
     return async dispatch => {
         try {
             const response = await voting.methods.vote(wakandaAddress, candidateId, amountOfVotes).send({from:wakandaAddress});
-            debugger;
             if(response) {
                 dispatch(voteSuccess(response));
             }

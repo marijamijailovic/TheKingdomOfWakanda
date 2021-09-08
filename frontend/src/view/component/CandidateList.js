@@ -38,7 +38,8 @@ const CandidateList = (props) => {
         const size = candidateList.length;
         const allCanidadtes = [];
         for(let i=0;i<size;i++){
-            allCanidadtes.push({...candidateList[i], score:0, id: i});
+            const candidate = candidateList[i];
+            allCanidadtes.push({...candidate, score:0, id: i});
         }
         dispatch(addAllCandidates(allCanidadtes));
     }

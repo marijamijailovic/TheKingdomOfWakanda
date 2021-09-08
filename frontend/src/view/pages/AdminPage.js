@@ -23,9 +23,6 @@ const AdminPage = () => {
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
             <Nav activeKey="/admin" onSelect={(selectedKey) => onSelectNavigationHandler(selectedKey)}>
-                {/* <Nav.Item>
-                <Nav.Link href="/admin">Active</Nav.Link>
-                </Nav.Item> */}
                 <Nav.Item>
                     <Nav.Link eventKey="add-candidates">Add Candidates</Nav.Link>
                 </Nav.Item>

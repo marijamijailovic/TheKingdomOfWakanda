@@ -49,7 +49,7 @@ const WelcomePage = () => {
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
             <h1>Welcome to the Kingdom of Wakanda voting</h1>
-            <Card body bg="lisght" onClick={() => cardClickHandler("/registration")}>
+            <Card body className="welcome-card" bg="lisght" onClick={() => cardClickHandler("/registration")}>
                 {`Your Ethereum address is ${connectedAccount}, please click here to register for voting!`}
             </Card>
         </div>
