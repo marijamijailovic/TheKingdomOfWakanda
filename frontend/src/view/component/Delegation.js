@@ -1,20 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { globalConstants } from "../../constants/global";
-import { getDelegators } from "../../redux/actions/delegatorActions";
-import { delegatorData, delegatorHasErrors, delegatorLoading, delegatorError } from "../../redux/slices/delegatorSlice";
-import { delegateVote } from "../../redux/actions/votingAction";
+import { isEmpty } from "underscore";
+import { getDelegators } from "../../redux/thunks/delegatorThunks";
+import { delegators } from "../../redux/slices/delegatorSlice";
+import { delegate } from "../../redux/thunks/votingThunks";
 import Message from "./Message";
 
 const Delegation = (props) => {
     const {wakandaAddress} = props;
     const dispatch = useDispatch();
     
-    const gettingDelegatorsLoading = useSelector(delegatorLoading);
-    const gettingDelegatorsHasErrors = useSelector(delegatorHasErrors);
-    const delegationResponse = useSelector(delegatorData);
-    const gettingDelegatorsError = useSelector(delegatorError);
+    const delegatorsData = useSelector(delegators);
 
     const [selectedDelegator, setSelectedDelegator] = useState("0");
     const [invalidAddress, setInvalidAddress] = useState(false);
@@ -29,12 +26,12 @@ const Delegation = (props) => {
         setSelectedDelegator(choosendDelegator);
     }
 
-    function handleSubmit(event) {
+    function handleSubmitDelegate(event) {
         event.preventDefault();
         if(selectedDelegator === "0") {
             setInvalidAddress(true);
         } else {
-            dispatch(delegateVote(wakandaAddress, selectedDelegator));
+            dispatch(delegate({wakandaAddress, selectedDelegator}));
         }
     }
 
@@ -45,8 +42,6 @@ const Delegation = (props) => {
                     <Form.Label htmlFor="wakandaAddress">Your address</Form.Label>
                     <Form.Control type="text" name="wakandaAddress" value={wakandaAddress} required readOnly /> 
                 </Form.Group>
-                {gettingDelegatorsLoading ? 
-                    <Message message={globalConstants.LOADING}/> :
                     <Form.Group controlId="delegator">
                         <Form.Label>Choose Delegator</Form.Label>
                         <Form.Control 
@@ -57,7 +52,7 @@ const Delegation = (props) => {
                             onChange={onDelegatorChangeHandler}
                             name="delegator">
                             <option value={0}>Open to select delegator</option>
-                            {delegationResponse.response && delegationResponse.response.map((delegator,index)=>{
+                            {!isEmpty(delegatorsData) && delegatorsData.response && delegatorsData.response.map((delegator,index)=>{
                                     return <option key={index} value={delegator}>{delegator}</option>
                                 })
                             }
@@ -66,14 +61,16 @@ const Delegation = (props) => {
                             Invalid address
                         </Form.Control.Feedback>
                     </Form.Group>
-                }
                 <Form.Group>
-                    <Button variant="success" type="submit"  onClick={handleSubmit}>
+                    <Button variant="success" type="submit" name="delegate" onClick={handleSubmitDelegate}>
                         Delegate   
                     </Button>
                 </Form.Group>
             </Form>
-            {gettingDelegatorsHasErrors && <Message message={gettingDelegatorsError}/>}
+            {!isEmpty(delegatorsData) &&
+                (delegatorsData.error && <Message message={delegatorsData.error}/>)  ||
+                (delegatorsData.reason && <Message message={delegatorsData.reason}/>)
+            }
         </div> 
     );
 };

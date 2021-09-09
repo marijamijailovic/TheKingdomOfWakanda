@@ -2,18 +2,18 @@ import React, {useEffect, useState} from "react";
 import { Table, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { globalConstants } from "../../constants/global";
+import { isEmptyString } from "../../helpers/utils";
+import { isEmpty, isString } from "underscore";
 import { getCandidates } from "../../services/adminService";
-import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
-import { addAllCandidates } from "../../redux/actions/candidatesActions";
+//import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
+import { transaction } from "../../redux/slices/candidatesSlice";
+import { addCandidates } from "../../redux/thunks/candidatesThunks";
 import Message from "./Message";
 
 const CandidateList = (props) => {
     const dispatch = useDispatch();
 
-    const addingCandidatesLoading = useSelector(candidatesLoading);
-    const addingCandidatesHasErrors = useSelector(candidatesHasErrors);
-    const addingCandidateResponse = useSelector(candidatesData);
-    const addingCandidatesError = useSelector(candidatesError);
+    const addCandidatesTx = useSelector(transaction);
     
     const [errorMessage, setErrorMessage] = useState();
     const [candidateList, setCandidatesList] = useState();
@@ -21,10 +21,10 @@ const CandidateList = (props) => {
     useEffect(() => {
         const fetchAllCandidates = async() => {
             const response = await getCandidates();
-            if(response && response.OK) {
-                setCandidatesList(response.Data.candidates);
+            if(response) {
+                setCandidatesList(response.candidates);
             } else {
-                setErrorMessage(response.ErrorText);
+                setErrorMessage(globalConstants.FAILED_GETING_CANIDATES);
             }
         }
         fetchAllCandidates();
@@ -41,7 +41,7 @@ const CandidateList = (props) => {
             const candidate = candidateList[i];
             allCanidadtes.push({...candidate, score:0, id: i});
         }
-        dispatch(addAllCandidates(allCanidadtes));
+        dispatch(addCandidates(allCanidadtes));
     }
 
     return (
@@ -66,15 +66,15 @@ const CandidateList = (props) => {
                         </tbody>
                 })}
             </Table>
-            <Button variant="success" size="lg" onClick={ onClickAddCandidatesHandler }>Add Candidates</Button>
-            {addingCandidatesLoading && <Message message={globalConstants.LOADING}/>}
-            {addingCandidatesHasErrors ? 
-                <Message message={addingCandidatesError}/> 
-                : 
-                addingCandidateResponse.response ?
-                    <Message message={`${globalConstants.SUCCESS_ADDING_CANDIDATES}, ${addingCandidateResponse.response.transactionHash}`} /> 
-                    : 
-                    <Message message={addingCandidateResponse.reason}/>}
+            {isEmpty(addCandidatesTx) ? 
+                <Button variant="success" size="lg" onClick={ onClickAddCandidatesHandler }>Add Candidates</Button>
+                :
+                (
+                addCandidatesTx.error && <Message message={addCandidatesTx.error}/>  ||
+                addCandidatesTx.reason && <Message message={addCandidatesTx.reason}/> ||
+                addCandidatesTx.response && <Message message={addCandidatesTx.response.transactionHash}/>
+                )
+            }
         </>
     )
 }

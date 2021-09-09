@@ -1,50 +1,32 @@
-import axios from "axios";
-import { REST_METHOD, CONFIG } from "./config";
-import { createOKResponse, createErrorResponse } from "./responses";
+import { REST_METHOD } from "./config";
+import { isNull } from "../helpers/utils";
 import { globalConstants } from "../constants/global"
+import { callAndCheckResponse } from "./responses";
 
-export async function addCandidates(candidates) {
-    try {
-        const response = await axios({
-            method: REST_METHOD.POST,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/addCandidates`,
-            data: {candidates}
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch(error) {
-        return createErrorResponse(error, globalConstants.FAILED_ADDING_CANIDATES);
-    }
+export const addCandidates = async(candidates) => {
+    return callAndCheckResponse(
+        `/addCandidates`,
+        REST_METHOD.POST,
+        globalConstants.FAILED_ADDING_CANIDATES,
+        response => !isNull(response.data),
+        {candidates}
+    );
 }
 
-export async function getCandidates() {
-    try {
-        const response = await axios({
-            method: REST_METHOD.GET,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/getCandidates`,
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch(error) {
-        return createErrorResponse(error, globalConstants.FAILED_GETING_CANIDATES);
-    }
+export const getCandidates = async() => {
+    return callAndCheckResponse(
+        `/getCandidates`,
+        REST_METHOD.GET,
+        globalConstants.FAILED_GETING_CANIDATES,
+        response => !isNull(response.data)
+    );
 }
 
 export async function getWinners() {
-    try {
-        const response = await axios({
-            method: REST_METHOD.GET,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/leaderboard`,
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch(error) {
-        return createErrorResponse(error, globalConstants.FAILED_GETING_LEADERBOARD);
-    }
+    return callAndCheckResponse(
+        `/leaderboard`,
+        REST_METHOD.GET,
+        globalConstants.FAILED_GETING_LEADERBOARD,
+        response => !isNull(response.data)
+    );
 }

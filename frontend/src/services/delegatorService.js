@@ -1,35 +1,23 @@
-import axios from "axios";
-import { REST_METHOD, CONFIG } from "./config";
-import { createOKResponse, createErrorResponse } from "./responses";
+import { REST_METHOD } from "./config";
 import { globalConstants } from "../constants/global"
+import { callAndCheckResponse } from "./responses";
+import { isNull } from "../helpers/utils";
 
-export async function addDelegator(delegatorAddress) {
-    try {
-        const response = await axios({
-            method: REST_METHOD.POST,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/addDelegators`,
-            data: {delegatorAddress}
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch(error) {
-        return createErrorResponse(error, globalConstants.FAILED_ADDING_DELEGATOR);
-    }
+export const addDelegator = async(delegatorAddress) => {
+    return callAndCheckResponse(
+        `/addDelegators`,
+        REST_METHOD.POST,
+        globalConstants.FAILED_ADDING_DELEGATOR,
+        response => !isNull(response.data),
+        {delegatorAddress}
+    );
 }
 
 export async function getDelegators() {
-    try {
-        const response = await axios({
-            method: REST_METHOD.GET,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/getDelegators`,
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch(error) {
-        return createErrorResponse(error, globalConstants.FAILED_GETING_DELEGATORS);
-    }
+    return callAndCheckResponse(
+        `/getDelegators`,
+        REST_METHOD.GET,
+        globalConstants.FAILED_GETING_DELEGATORS,
+        response => !isNull(response.data)
+    );
 }

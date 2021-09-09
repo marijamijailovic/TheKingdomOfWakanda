@@ -42,7 +42,7 @@ const WelcomePage = () => {
         <div className = "c-app c-default-layout flex-row align-items-center">
             <h1>Welcome to the Kingdom of Wakanda voting</h1>
             <Card body className="welcome-card" bg="lisght" onClick={() => cardClickHandler("/registration")}>
-                {`Your Ethereum address is ${wakadnaAddres}, please click here to register for voting!`}
+                {`You are currently connected with address ${wakadnaAddres}, please click here to register for voting!`}
             </Card>
         </div>
     );

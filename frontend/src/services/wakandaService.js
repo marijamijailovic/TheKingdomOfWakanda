@@ -1,35 +1,23 @@
-import axios from "axios";
-import { CONFIG, REST_METHOD } from "./config";
-import { createOKResponse, createErrorResponse } from "./responses";
-import { globalConstants } from "../constants/global"
+import { REST_METHOD } from "./config";
+import { globalConstants } from "../constants/global";
+import { callAndCheckResponse } from "./responses";
+import { isNull } from "../helpers/utils";
 
 export async function addWakanda(wakandaAddress) {
-    try {
-        const response = await axios({
-            method: REST_METHOD.POST,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/registration`,
-            data: {wakandaAddress}
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch (error){
-        return createErrorResponse(error, globalConstants.FAILED_REGISTRATION);
-    }
+    return callAndCheckResponse(
+        `/registration`,
+        REST_METHOD.POST,
+        globalConstants.FAILED_REGISTRATION,
+        response => !isNull(response.data),
+        {wakandaAddress}
+    );
 }
 
 export async function getWakandaStatus(wakandaAddress) {
-    try {
-        const response = await axios({
-            method: REST_METHOD.GET,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            url: `${CONFIG.URL}/getWakandaStatus?wakandaAddress=${wakandaAddress}`
-        });
-        return createOKResponse(response.status,  response.data);
-    } catch (error){
-        return createErrorResponse(error, globalConstants.FAILED_GETING_BALANCE);
-    }
+    return callAndCheckResponse(
+        `/getWakandaStatus?wakandaAddress=${wakandaAddress}`,
+        REST_METHOD.GET,
+        globalConstants.FAILED_GETING_BALANCE,
+        response => !isNull(response.data),
+    );
 }

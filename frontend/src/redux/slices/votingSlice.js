@@ -1,22 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { initialState } from "../state";
-import { request, success, failure} from "../actions/actionsType";
+import { vote, delegate } from "../thunks/votingThunks";
 
 export const votingSlice = createSlice({
   name: "voting",
-  initialState,
-  reducers: {
-    voteRequest: request,
-    voteSuccess: success,
-    voteFailure: failure,
-  },
+  initialState: {voteData: [], delegateData: [], loading: "idle"},
+  reducers: {},
+  extraReducers: {
+    [vote.fulfilled] : (state, action) => {
+      state.delegators = action.payload;
+    },
+    [delegate.fulfilled] : (state, action) => {
+      state.delegators = action.payload;
+    }
+  }
 })
 
-export const { voteRequest, voteSuccess, voteFailure } = votingSlice.actions;
-
-export const votingLoading = state => state.voting.loading;
-export const votingHasErrors = state => state.voting.hasErrors;
-export const votingData = state => state.voting.data;
-export const votingError = state => state.voting.error;
+export const voteData = state => state.voting.voteData;
+export const delegateData = state => state.voting.delegateData;
 
 export default votingSlice.reducer;

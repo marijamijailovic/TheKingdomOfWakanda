@@ -32,10 +32,10 @@ module.exports = {
     localhost: {
       url: API_URL_LOCAL
     },
-    // kovan: {
-    //   url: API_URL_KOVAN_ALCHEMY,
-    //   accounts: [`0x${PRIVATE_KEY_KOVAN}`]
-    // }
+    kovan: {
+      url: API_URL_KOVAN_ALCHEMY,
+      accounts: [`0x${PRIVATE_KEY_KOVAN}`]
+    },
     hardhat: {
       chainId: 1337
     }

@@ -1,9 +1,10 @@
 import React from "react";
 
 const Message = (props) => {
+    const {message} = props;
     return (
         <div>
-            {props.message}
+            {message}
         </div>
     );
 };

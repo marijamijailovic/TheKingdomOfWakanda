@@ -30,11 +30,11 @@ const metamaskSlice = createSlice({
     name: "metamask",
     initialState,
     reducers: {},
-    extraReducers(builder) {
-        builder.addCase(metaMaskConnect.fulfilled, (state, action) => {
+    extraReducers: {
+        [metaMaskConnect.fulfilled]: (state, action) => {
             state.connected = action.payload;
             return state;
-        });
+        }
     }
 })
 

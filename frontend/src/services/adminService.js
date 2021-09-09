@@ -1,6 +1,5 @@
 import axios from "axios";
 import { CANDIDATES_LIST, REST_METHOD } from "./config";
-import { createOKResponse, createErrorResponse } from "./responses";
 import { globalConstants } from "../constants/global"
 
 //These request is for admin page, to get candidates from https://wakanda.zmilos.com/list
@@ -13,8 +12,8 @@ export async function getCandidates() {
             },
             url: CANDIDATES_LIST.URL
         });
-        return createOKResponse(response.status,  response.data);
+        return response.data;
     } catch(error) {
-        return createErrorResponse(error, globalConstants.FAILED_GETING_CANIDATES);
+        return {error: globalConstants.FAILED_GETING_CANIDATES};
     }
 }

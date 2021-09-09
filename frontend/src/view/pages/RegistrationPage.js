@@ -1,11 +1,12 @@
 import React, {useEffect, useState} from "react";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { isValidWakandaAddresses } from "../../helpers/utils";
+import { isValidWakandaAddresses, changeRoute } from "../../helpers/utils";
+import { isEmpty } from "underscore";
 import { getItem, setItem } from "../../helpers/storage";
 import { Redirect } from "react-router-dom";
-import { wakandaData, wakandaHasErrors, wakandaLoading, wakandaError } from "../../redux/slices/wakandaSlice";
-import { wakandaRegistration } from "../../redux/actions/wakandaActions";
+import { registration } from "../../redux/slices/wakandaSlice";
+import { wakandaRegistration } from "../../redux/thunks/wakandaThunks";
 import Message from "../component/Message";
 import { globalConstants } from "../../constants/global";
 
@@ -16,13 +17,11 @@ const RegistrationPage = (props) => {
     const web3Support = getItem(globalConstants.WEB3_SUPPORT);
     //const connectedAccount = useSelector(state => state.connectedAccount.account);
     
-    const registrationLoading = useSelector(wakandaLoading);
-    const registrationHasErrors = useSelector(wakandaHasErrors);
-    const registrationData = useSelector(wakandaData);
-    const registrationError = useSelector(wakandaError);
-
+    const registrationData = useSelector(registration);
+    
     const [wakandaAddress, setWakandaAddress] = useState(connectedAccount);
     const [invalidAddress, setInvalidAddress] = useState(false);
+    const [isVotingPageVisible, setIsVotingPageVisible] = useState(false);
 
     // useEffect(()=>{
     //     const connect = async() => {
@@ -54,7 +53,7 @@ const RegistrationPage = (props) => {
         setWakandaAddress(address);
     }
 
-    function handleSubmit(event) {
+    function handleSubmitWakandaRegistration(event) {
         event.preventDefault();
         if(!isValidWakandaAddresses(wakandaAddress)) {
             setInvalidAddress(true);
@@ -63,35 +62,48 @@ const RegistrationPage = (props) => {
         }
     }
 
+    const onRedirectToVotingHandler = (page) => {
+        changeRoute(page);
+        setIsVotingPageVisible(true);
+    }
+
     if(!web3Support) {
         return <Message message={globalConstants.NOT_WEB3_BROWSER} />
     }
 
-    if(registrationData.response || registrationData.reason === globalConstants.ALREADY_REGISTERED){
+    if(isVotingPageVisible) {
         return <Redirect to="/voting"/>
     }
 
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
-            <Form onSubmit={handleSubmit}>
+            <h1>Registration Page</h1>
+            <h3>If registration succeed, we will send you 1 WKND token that you could use for voting</h3>
+            <Form>
                 <Form.Group>
-                    <Form.Label htmlFor="wakandaAddress">Registration page</Form.Label>
+                    <Form.Label htmlFor="wakandaAddress">Input your address</Form.Label>
                     <Form.Control type="text" name="wakandaAddress" isInvalid={invalidAddress} value={wakandaAddress} required onChange={(e) => onWakandaAddressChange(e)} /> 
                     <Form.Control.Feedback type="invalid">
                         Invalid address
                     </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group>
-                    <Button variant="success" type="submit">
+                    <Button variant="success" type="submit" name="registration" onClick={handleSubmitWakandaRegistration}>
                         Register   
                     </Button>
                 </Form.Group>
             </Form>
-            {registrationLoading && <Message message={globalConstants.LOADING} />}
-            {registrationHasErrors ? 
-                <Message message={registrationError} /> 
-                : 
-                registrationData.reason && <Message message={registrationData.reason} />
+            {!isEmpty(registrationData) && 
+                (
+                (registrationData.error && <Message message={registrationData.error}/>)  ||
+                (registrationData.reason && <Message message={registrationData.reason}/>) ||
+                (registrationData.response && 
+                    <div>
+                        <Message message={registrationData.response.transactionHash}/>
+                        <Button onClick={() => onRedirectToVotingHandler("/voting")}>Go to voting page</Button>
+                    </div>
+                )
+                )
             }
         </div>
     );

@@ -4,13 +4,14 @@ import { useDispatch, useSelector } from "react-redux";
 import Message from "../component/Message";
 import { globalConstants } from "../../constants/global";
 import { getItem, setItem } from "../../helpers/storage";
-import { wakandaData, wakandaHasErrors, wakandaError } from "../../redux/slices/wakandaSlice";
-import { getWakandaStatus } from "../../redux/actions/wakandaActions";
-
+import { status } from "../../redux/slices/wakandaSlice";
+import { isEmptyString } from "../../helpers/utils";
+import { isEmpty } from "underscore";
+import { getWakandaStatus } from "../../redux/thunks/wakandaThunks";
 import Delegation from "../component/Delegation";
 import VotingComponent from "../component/VotingComponent";
 import Leaderboard from "../component/Leaderboard";
-import { votingData, votingHasErrors, votingError } from "../../redux/slices/votingSlice";
+import { voteData, delegateData } from "../../redux/slices/votingSlice";
 
 const VotingPage = (props) => {
     const dispatch = useDispatch();
@@ -18,16 +19,14 @@ const VotingPage = (props) => {
     const connectedAccount = getItem(globalConstants.META_MASK_ACCOUNT);
     const web3Support = getItem(globalConstants.WEB3_SUPPORT);
     
-    const gettingWakandaStatusHasError = useSelector(wakandaHasErrors);
-    const wakandaStatusData = useSelector(wakandaData);
-    const gettingWakandaStatusError = useSelector(wakandaError);
+    const wakandaStatus = useSelector(status);
 
-    const sendingVoteHasErrors = useSelector(votingHasErrors);
-    const voteResponse = useSelector(votingData);
-    const sendingVoteError = useSelector(votingError);
+    const voteDataTx = useSelector(voteData);
+    const delagateDataTx = useSelector(delegateData);
     
-    const balanceOfWKND = wakandaStatusData && wakandaStatusData.response ? +wakandaStatusData.response.balance : 0;
-    const wakandaRegistered = wakandaStatusData && wakandaStatusData.response && wakandaStatusData.response.registered;
+    const balanceOfWKND = !isEmpty(wakandaStatus) && wakandaStatus.response && wakandaStatus.response.balance ? +wakandaStatus.response.balance : 0;
+    const wakandaRegistered = !isEmpty(wakandaStatus) && wakandaStatus.response && wakandaStatus.response.registered;
+    
     const [wantToVote, setWantToVote] = useState(true);
     const [wakandaAddress, setWakandaAddress] = useState(connectedAccount);
 
@@ -54,18 +53,30 @@ const VotingPage = (props) => {
         return <Message message={globalConstants.NOT_WEB3_BROWSER} />
     }
 
-    if(gettingWakandaStatusHasError) {
-        return <Message message={gettingWakandaStatusError} />;
+    if(!isEmpty(wakandaStatus)) {
+        if(!isEmptyString(wakandaStatus.error))
+            return <Message message={wakandaStatus.error}/>;
+        else if(wakandaStatus.reason) {
+            return <Message message={wakandaStatus.reason}/>
+        }
     }
 
-    if(sendingVoteHasErrors) {
-        return <Message message={sendingVoteError} />;
-    }
+    // if(sendingVoteHasErrors) {
+    //     return <Message message={sendingVoteError} />;
+    // }
 
-    if(voteResponse.transactionHash) {
+    if(voteDataTx.transactionHash) {
         return (
             <div>
-                <Message message={`Success tx is: ${voteResponse.transactionHash}`} />
+                <Message message={`Success tx is: ${voteDataTx.transactionHash}`} />
+                <Leaderboard />
+            </div>)
+    }
+
+    if(delagateDataTx.transactionHash) {
+        return (
+            <div>
+                <Message message={`Success tx is: ${delagateDataTx.transactionHash}`} />
                 <Leaderboard />
             </div>)
     }

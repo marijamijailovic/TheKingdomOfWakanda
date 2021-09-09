@@ -1,18 +1,19 @@
 import React, { useEffect } from "react";
 import { Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { globalConstants } from "../../constants/global";
-import {  candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
-import { getWinningCandidates } from "../../redux/actions/candidatesActions";
-import Message from "./Message";
+import { winners} from "../../redux/slices/candidatesSlice";
+import { getWinningCandidates } from "../../redux/thunks/candidatesThunks";
+//import {  candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
+//import { getWinningCandidates } from "../../redux/actions/candidatesActions";
 
 const Leaderboard = (props) => {
     const dispatch = useDispatch();
 
-    const gettingLeaderboardLoading = useSelector(candidatesLoading);
-    const gettingLeaderboardHasError = useSelector(candidatesHasErrors);
-    const leaderboardData = useSelector(candidatesData);
-    const gettingLeaderboardError = useSelector(candidatesError);
+    const leaderboardData = useSelector(winners);
+    // const gettingLeaderboardLoading = useSelector(candidatesLoading);
+    // const gettingLeaderboardHasError = useSelector(candidatesHasErrors);
+    // const leaderboardData = useSelector(candidatesData);
+    // const gettingLeaderboardError = useSelector(candidatesError);
 
     useEffect(() => {
         dispatch(getWinningCandidates());
@@ -21,9 +22,9 @@ const Leaderboard = (props) => {
     return (
         <>
             <h3>Winners candidate</h3>
-            {gettingLeaderboardLoading && <Message message={globalConstants.LOADING}/>}
+            {/* {gettingLeaderboardLoading && <Message message={globalConstants.LOADING}/>}
             {gettingLeaderboardHasError ?
-                <Message message={gettingLeaderboardError}/> : 
+                <Message message={gettingLeaderboardError}/> :  */}
                 <Table striped bordered hover size="sm">
                     <thead>
                         <tr>
@@ -47,7 +48,7 @@ const Leaderboard = (props) => {
                             </tbody>
                     })}
                 </Table>
-            }
+            {/* } */}
         </>
     )
 }

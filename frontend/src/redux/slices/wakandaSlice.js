@@ -1,22 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { initialState } from "../state";
-import { request, success, failure} from "../actions/actionsType";
+import { wakandaRegistration, getWakandaStatus} from "../thunks/wakandaThunks";
 
 export const wakandaSlice = createSlice({
   name: "wakanda",
-  initialState,
-  reducers: {
-    wakandaRequest: request,
-    wakandaSuccess: success,
-    wakandaFailure: failure,
-  },
+  initialState: {registration: [], status: [], loading: "idle"},
+  reducers: {},
+  extraReducers: {
+    [wakandaRegistration.fulfilled] : (state, action) => {
+      state.registration = action.payload;
+    },
+    [getWakandaStatus.fulfilled] : (state, action) => {
+      state.status = action.payload;
+    }
+  }
 })
 
-export const { wakandaRequest, wakandaSuccess, wakandaFailure } = wakandaSlice.actions;
-
-export const wakandaLoading = state => state.wakanda.loading;
-export const wakandaHasErrors = state => state.wakanda.hasErrors;
-export const wakandaData = state => state.wakanda.data;
-export const wakandaError = state => state.wakanda.error;
+export const registration = state => state.wakanda.registration;
+export const status = state => state.wakanda.status;
 
 export default wakandaSlice.reducer;

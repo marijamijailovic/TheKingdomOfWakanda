@@ -1,22 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit"
-import {initialState} from "../state";
-import { request, success, failure} from "../actions/actionsType";
+import { createSlice } from "@reduxjs/toolkit";
+import { addDelegator, getDelegators } from "../thunks/delegatorThunks";
 
 export const delegatorSlice = createSlice({
   name: "delegator",
-  initialState,
-  reducers: {
-    delegatorRequest: request,
-    delegatorSuccess: success,
-    delegatorFailure: failure,
-  },
+  initialState: {delegators: [], loading: "idle"},
+  reducers: {},
+  extraReducers: {
+    [addDelegator.fulfilled] : (state, action) => {
+      state.delegators = action.payload;
+    },
+    [getDelegators.fulfilled] : (state, action) => {
+      state.delegators = action.payload;
+    }
+  }
 })
 
-export const { delegatorRequest, delegatorSuccess, delegatorFailure } = delegatorSlice.actions;
-
-export const delegatorLoading = state => state.delegator.loading;
-export const delegatorHasErrors = state => state.delegator.hasErrors;
-export const delegatorData = state => state.delegator.data;
-export const delegatorError = state => state.delegator.error;
+export const delegators = state => state.delegator.delegators;
 
 export default delegatorSlice.reducer;
