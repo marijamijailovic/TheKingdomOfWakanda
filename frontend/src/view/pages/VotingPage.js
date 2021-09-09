@@ -65,7 +65,7 @@ const VotingPage = (props) => {
     //     return <Message message={sendingVoteError} />;
     // }
 
-    if(voteDataTx.transactionHash) {
+    if(!isEmpty(voteDataTx) && voteDataTx.transactionHash) {
         return (
             <div>
                 <Message message={`Success tx is: ${voteDataTx.transactionHash}`} />
@@ -73,7 +73,7 @@ const VotingPage = (props) => {
             </div>)
     }
 
-    if(delagateDataTx.transactionHash) {
+    if(!isEmpty(delagateDataTx) && delagateDataTx.transactionHash) {
         return (
             <div>
                 <Message message={`Success tx is: ${delagateDataTx.transactionHash}`} />

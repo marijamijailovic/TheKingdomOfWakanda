@@ -31,7 +31,7 @@ const Delegation = (props) => {
         if(selectedDelegator === "0") {
             setInvalidAddress(true);
         } else {
-            dispatch(delegate({wakandaAddress, selectedDelegator}));
+            dispatch(delegate({wakandaAddress, delegatorAddress: selectedDelegator}));
         }
     }
 
@@ -67,10 +67,8 @@ const Delegation = (props) => {
                     </Button>
                 </Form.Group>
             </Form>
-            {!isEmpty(delegatorsData) &&
-                (delegatorsData.error && <Message message={delegatorsData.error}/>)  ||
-                (delegatorsData.reason && <Message message={delegatorsData.reason}/>)
-            }
+            {delegatorsData.error && <Message message={delegatorsData.error}/>}
+            {delegatorsData.reason && <Message message={delegatorsData.reason}/>}
         </div> 
     );
 };

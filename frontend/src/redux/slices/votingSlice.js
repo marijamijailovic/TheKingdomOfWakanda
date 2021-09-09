@@ -3,14 +3,14 @@ import { vote, delegate } from "../thunks/votingThunks";
 
 export const votingSlice = createSlice({
   name: "voting",
-  initialState: {voteData: [], delegateData: [], loading: "idle"},
+  initialState: {voteData: {}, delegateData: {}, loading: "idle"},
   reducers: {},
   extraReducers: {
     [vote.fulfilled] : (state, action) => {
-      state.delegators = action.payload;
+      state.voteData = action.payload;
     },
     [delegate.fulfilled] : (state, action) => {
-      state.delegators = action.payload;
+      state.delegateData = action.payload;
     }
   }
 })

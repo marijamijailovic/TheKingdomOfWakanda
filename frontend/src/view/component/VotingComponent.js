@@ -4,18 +4,11 @@ import InputNumber from "rc-input-number";
 import { useDispatch, useSelector } from "react-redux";
 import { candidates} from "../../redux/slices/candidatesSlice";
 import { getCandidates } from "../../redux/thunks/candidatesThunks";
-//import { getAllCandidates } from "../../redux/actions/candidatesActions";
 import { vote } from "../../redux/thunks/votingThunks";
-//import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
 
 const VotingComponent = (props) => {
     const {wakandaAddress, balanceOfWKND} = props;
     const dispatch = useDispatch();
-    
-    // const gettingCandidatesLoading = useSelector(candidatesLoading);
-    // const gettingCandidatesHasErrors = useSelector(candidatesHasErrors);
-    // const allCandidatesList = useSelector(candidatesData);
-    // const gettingCandidatesError = useSelector(candidatesError);
     const allCandidatesList = useSelector(candidates);
 
     const [amountOfVotes, setAmountOfVotes] = useState(balanceOfWKND);
@@ -41,10 +34,6 @@ const VotingComponent = (props) => {
         }
     }
 
-    // if(gettingCandidatesHasErrors) {
-    //     return <Message message={gettingCandidatesError} />;
-    // }
-
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
             <Form>
@@ -52,8 +41,6 @@ const VotingComponent = (props) => {
                     <Form.Label htmlFor="wakandaAddress">Your address</Form.Label>
                     <Form.Control type="text" name="wakandaAddress" value={wakandaAddress} required readOnly /> 
                 </Form.Group>
-                {/* {gettingCandidatesLoading ? 
-                    <Message message={globalConstants.LOADING}/> : */}
                     <Form.Group controlId="delegator">
                         <Form.Label>Choose your wakanda presidend</Form.Label>
                         <Form.Control 
@@ -73,7 +60,6 @@ const VotingComponent = (props) => {
                             Invalid address
                         </Form.Control.Feedback>
                     </Form.Group>
-                {/* } */}
                 <Form.Group>
                     <Form.Label htmlFor="balanceOfWakanda">Your amount of vote:</Form.Label>
                     <InputNumber min={1} max={balanceOfWKND} defaultValue={balanceOfWKND} value={amountOfVotes} onChange={setAmountOfVotes}/>

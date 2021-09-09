@@ -2,10 +2,8 @@ import React, {useEffect, useState} from "react";
 import { Table, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { globalConstants } from "../../constants/global";
-import { isEmptyString } from "../../helpers/utils";
-import { isEmpty, isString } from "underscore";
+import { isEmpty } from "underscore";
 import { getCandidates } from "../../services/adminService";
-//import { candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
 import { transaction } from "../../redux/slices/candidatesSlice";
 import { addCandidates } from "../../redux/thunks/candidatesThunks";
 import Message from "./Message";
@@ -69,11 +67,11 @@ const CandidateList = (props) => {
             {isEmpty(addCandidatesTx) ? 
                 <Button variant="success" size="lg" onClick={ onClickAddCandidatesHandler }>Add Candidates</Button>
                 :
-                (
-                addCandidatesTx.error && <Message message={addCandidatesTx.error}/>  ||
-                addCandidatesTx.reason && <Message message={addCandidatesTx.reason}/> ||
-                addCandidatesTx.response && <Message message={addCandidatesTx.response.transactionHash}/>
-                )
+                (addCandidatesTx.error && <Message message={addCandidatesTx.error}/>)
+                ||
+                (addCandidatesTx.reason && <Message message={addCandidatesTx.reason}/>)
+                ||
+                (addCandidatesTx.response && <Message message={addCandidatesTx.response.transactionHash}/>)
             }
         </>
     )

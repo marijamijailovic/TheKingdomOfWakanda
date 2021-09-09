@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { isEmpty } from "underscore";
 import { isValidWakandaAddresses } from "../../helpers/utils";
 import { delegators } from "../../redux/slices/delegatorSlice";
 import { addDelegator } from "../../redux/thunks/delegatorThunks";
@@ -46,13 +45,9 @@ const AddDelegator = (props) => {
                     </Button>
                 </Form.Group>
             </Form>
-            {!isEmpty(addDelegatorsTx) &&
-                (
-                    addDelegatorsTx.error && <Message message={addDelegatorsTx.error}/>  ||
-                    addDelegatorsTx.reason && <Message message={addDelegatorsTx.reason}/> ||
-                    addDelegatorsTx.response && <Message message={addDelegatorsTx.response.transactionHash}/>
-                )
-            }
+            {addDelegatorsTx.error && <Message message={addDelegatorsTx.error}/>}
+            {addDelegatorsTx.reason && <Message message={addDelegatorsTx.reason}/>}
+            {addDelegatorsTx.response && <Message message={addDelegatorsTx.response.transactionHash}/>}
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { createBrowserHistory } from "history";
-import { isEmpty, isString } from "underscore";
+import { isString } from "underscore";
 export const history = createBrowserHistory();
 
 export const changeRoute = (route = "/") => {

@@ -7,22 +7,19 @@ const web3 = new Web3(Web3.givenProvider || API_URL);
 const voting = new web3.eth.Contract(Voting.abi, VOTING_CONTRACT_ADDRESS);
 
 export const vote = createAsyncThunk("voting/vote", async ({wakandaAddress, candidateId, amountOfVotes}) => {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const response = await voting.methods.vote({wakandaAddress, candidateId, amountOfVotes}).send({from:wakandaAddress});
-    debugger;
-    if(response.OK) {
-        return response.Data;
-    } else {
-        return response.Error;
+    try{
+        const response = await voting.methods.vote(wakandaAddress, candidateId, amountOfVotes).send({from:wakandaAddress});
+        return response;
+    } catch (error) {
+        console.log(error);
     }
 });
   
 export const delegate = createAsyncThunk("voting/delegator", async({wakandaAddress, delegatorAddress}) => {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const response = await voting.methods.delegateVote(wakandaAddress, delegatorAddress).send({from: wakandaAddress});
-    if(response.OK) {
-        return response.Data;
-    } else {
-        return response.Error;
+    try{
+        const response = await voting.methods.delegateVote(wakandaAddress, delegatorAddress).send({from: wakandaAddress});
+        return response;
+    } catch (error) {
+        console.log(error);
     }
 });
