@@ -1,32 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import InputNumber from "rc-input-number";
+import { isEmpty } from "underscore";
 import { useDispatch, useSelector } from "react-redux";
-import { candidates} from "../../redux/slices/candidatesSlice";
-import { getCandidates } from "../../redux/thunks/candidatesThunks";
-import { vote } from "../../redux/thunks/votingThunks";
+import { candidates} from "../../../redux/slices/candidatesSlice";
+import { getCandidates } from "../../../redux/thunks/candidatesThunks";
+import { vote } from "../../../redux/thunks/votingThunks";
+import { voteData, updateState } from "../../../redux/slices/votingSlice";
+import Leaderboard from "./Leaderboard";
+import Message from "../Message";
 
 const VotingComponent = (props) => {
     const {wakandaAddress, balanceOfWKND} = props;
+
     const dispatch = useDispatch();
+    
     const allCandidatesList = useSelector(candidates);
+    const voteDataTx = useSelector(voteData);
 
     const [amountOfVotes, setAmountOfVotes] = useState(balanceOfWKND);
     const [selectedPresident, setSelectedPresident] = useState("-1");
     const [invalidCandidate, setInvalidCandidate] = useState(false);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
 
     useEffect(()=>{
         dispatch(getCandidates());
     },[dispatch]);
 
-    function onPresidentChangeHandler(event) {
+    const onPresidentChangeHandler = (event) => {
         setInvalidCandidate(false);
         const choosenPresident = event.target.value;
         setSelectedPresident(choosenPresident);
     }
 
-    function handleSubmitVote(event) {
+    const handleSubmitVote = (event) => {
         event.preventDefault();
+        dispatch(updateState());
         if(selectedPresident === "-1") {
             setInvalidCandidate(true);
         } else {
@@ -34,9 +43,16 @@ const VotingComponent = (props) => {
         }
     }
 
+    const handleShowLeaderboard = () => {
+        setShowLeaderboard(true);
+    }
+
     return (
-        <div className = "c-app c-default-layout flex-row align-items-center">
-            <Form>
+        <>
+            <div className="notice">
+                <label>{`*Make sure that voting address and connected address are the same, in opposite voting will fail!*`}</label>
+            </div>
+            <Form className="c-wakanda-form">
                 <Form.Group>
                     <Form.Label htmlFor="wakandaAddress">Your address</Form.Label>
                     <Form.Control type="text" name="wakandaAddress" value={wakandaAddress} required readOnly /> 
@@ -69,8 +85,19 @@ const VotingComponent = (props) => {
                         Vote   
                     </Button>
                 </Form.Group>
+                {!isEmpty(voteDataTx) && 
+                    <div>
+                        <Message data={voteDataTx} />
+                        {voteDataTx.response &&
+                            <Button variant="success" name="leaderboard" onClick={handleShowLeaderboard}>
+                                Show Leaderboard   
+                            </Button>
+                        }
+                    </div>
+                }
             </Form>
-        </div> 
+            {showLeaderboard && <Leaderboard/>}
+        </>
     )
 }
 

@@ -3,8 +3,7 @@ import { Switch, Route } from "react-router-dom";
 
 const AdminPage = React.lazy(() => import("../view/pages/AdminPage"));
 const WelcomePage = React.lazy(() => import("../view/pages/WelcomePage"));
-const RegistrationPage = React.lazy(() => import("../view/pages/RegistrationPage"));
-const VotingPage = React.lazy(() =>import("../view/pages/VotingPage"));
+const NotFound = React.lazy(() => import("../view/pages/NotFound"));
 
 const AppRouter = () => {
     return (
@@ -17,21 +16,14 @@ const AppRouter = () => {
             />
             <Route 
                 exact 
-                path = "/voting"
-                name = "VotingPage"
-                render={(props) => <VotingPage {...props}/>}
-            />
-            <Route 
-                exact 
-                path = "/registration"
-                name = "RegistrationPage"
-                render={(props) => <RegistrationPage {...props}/>}
-            />
-            <Route 
-                exact 
                 path = "/"
                 name = "WelcomePage"
                 render={(props) => <WelcomePage {...props}/>} 
+            />
+            <Route 
+                path = "*"
+                name = "NotFound"
+                render={(props) => <NotFound {...props}/>}
             />
         </Switch>
     )

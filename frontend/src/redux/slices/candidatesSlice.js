@@ -4,7 +4,14 @@ import { getCandidates, addCandidates, getWinningCandidates} from "../thunks/can
 export const candidatesSlice = createSlice({
   name: "candidates",
   initialState: {candidates: [], transaction: [], winners: [], loading: "idle"},
-  reducers: {},
+  reducers: {
+    updateState: (state) =>{
+      state.candidates = [];
+      state.transaction = [];
+      state.winners = [];
+      state.loading = "idle";
+    }
+  },
   extraReducers: {
     [getCandidates.fulfilled] : (state, action) => {
       state.candidates = action.payload;
@@ -17,6 +24,8 @@ export const candidatesSlice = createSlice({
     }
   }
 })
+
+export const {updateState} = candidatesSlice.actions;
 
 export const candidates = state => state.candidates.candidates;
 export const transaction = state => state.candidates.transaction;

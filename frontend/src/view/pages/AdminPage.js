@@ -1,10 +1,10 @@
 import React, {useState} from "react";
 import { Nav } from "react-bootstrap";
-import CandidateList from "../component/CandidateList";
-import AddDelegator from "../component/AddDelegator";
+import CandidateList from "../component/admin/CandidateList";
+import AddDelegator from "../component/admin/AddDelegator";
 
 const AdminPage = () => {
-    const [showAddCandidates, setShowAddCandidates] = useState(false);
+    const [showAddCandidates, setShowAddCandidates] = useState(true);
     const [showAddDelegators, setShowAddDelegators] = useState(false);
 
     const onSelectNavigationHandler = (selectedKey) =>{
@@ -14,15 +14,12 @@ const AdminPage = () => {
         } else if(selectedKey === "add-delegators") {
             setShowAddCandidates(false);
             setShowAddDelegators(true);
-        } else {
-            setShowAddCandidates(false);
-            setShowAddDelegators(false);
-        }
+        } 
     }
 
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
-            <Nav activeKey="/admin" onSelect={(selectedKey) => onSelectNavigationHandler(selectedKey)}>
+            <Nav variant="tabs" defaultActiveKey="add-candidates" activeKey="/admin" onSelect={(selectedKey) => onSelectNavigationHandler(selectedKey)}>
                 <Nav.Item>
                     <Nav.Link eventKey="add-candidates">Add Candidates</Nav.Link>
                 </Nav.Item>

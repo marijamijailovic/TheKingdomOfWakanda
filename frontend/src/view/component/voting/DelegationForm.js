@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Form, Button } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
 import { isEmpty } from "underscore";
-import { getDelegators } from "../../redux/thunks/delegatorThunks";
-import { delegators } from "../../redux/slices/delegatorSlice";
-import { delegate } from "../../redux/thunks/votingThunks";
-import Message from "./Message";
+import { useDispatch, useSelector } from "react-redux";
+import { getDelegators } from "../../../redux/thunks/delegatorThunks";
+import { delegators } from "../../../redux/slices/delegatorSlice";
+import { delegate } from "../../../redux/thunks/votingThunks";
+import { delegateData, updateState } from "../../../redux/slices/votingSlice";
+import Message from "../Message";
+import Leaderboard from "./Leaderboard";
 
 const Delegation = (props) => {
     const {wakandaAddress} = props;
     const dispatch = useDispatch();
     
     const delegatorsData = useSelector(delegators);
+    const delegateDataTx = useSelector(delegateData);
 
     const [selectedDelegator, setSelectedDelegator] = useState("0");
     const [invalidAddress, setInvalidAddress] = useState(false);
@@ -20,14 +23,15 @@ const Delegation = (props) => {
         dispatch(getDelegators());
     },[dispatch]);
 
-    function onDelegatorChangeHandler(event) {
+    const onDelegatorChangeHandler = (event) => {
         setInvalidAddress(false);
         const choosendDelegator = event.target.value;
         setSelectedDelegator(choosendDelegator);
     }
 
-    function handleSubmitDelegate(event) {
+    const handleSubmitDelegate = (event) => {
         event.preventDefault();
+        dispatch(updateState());
         if(selectedDelegator === "0") {
             setInvalidAddress(true);
         } else {
@@ -35,9 +39,19 @@ const Delegation = (props) => {
         }
     }
 
+    const handleShowLeaderboard = () => {
+        return <Leaderboard />
+    }
+
     return (
-        <div className = "c-app c-default-layout flex-row align-items-center">
-            <Form>
+        <>
+            <div className="notice">
+                <label>
+                    {`*You could delegate only 1WKND*`}<br />
+                    {`*Make sure that voting address and connected address are the same, in opposite delegation of vote will fail!*`}
+                </label>
+            </div>
+            <Form className="c-wakanda-form">
                 <Form.Group>
                     <Form.Label htmlFor="wakandaAddress">Your address</Form.Label>
                     <Form.Control type="text" name="wakandaAddress" value={wakandaAddress} required readOnly /> 
@@ -52,7 +66,7 @@ const Delegation = (props) => {
                             onChange={onDelegatorChangeHandler}
                             name="delegator">
                             <option value={0}>Open to select delegator</option>
-                            {!isEmpty(delegatorsData) && delegatorsData.response && delegatorsData.response.map((delegator,index)=>{
+                            {delegatorsData.response && delegatorsData.response.map((delegator,index)=>{
                                     return <option key={index} value={delegator}>{delegator}</option>
                                 })
                             }
@@ -66,10 +80,18 @@ const Delegation = (props) => {
                         Delegate   
                     </Button>
                 </Form.Group>
+                {!isEmpty(delegateDataTx) && 
+                    <div>
+                        <Message data={delegateDataTx} />
+                        {delegateDataTx.response && 
+                            <Button variant="success" name="leaderboard" onClick={handleShowLeaderboard}>
+                                Show Leaderboard   
+                            </Button>
+                        }
+                    </div>
+                }
             </Form>
-            {delegatorsData.error && <Message message={delegatorsData.error}/>}
-            {delegatorsData.reason && <Message message={delegatorsData.reason}/>}
-        </div> 
+        </>
     );
 };
 

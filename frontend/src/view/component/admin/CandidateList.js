@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import { Table, Button } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { globalConstants } from "../../constants/global";
+import { globalConstants } from "../../../constants/global";
 import { isEmpty } from "underscore";
-import { getCandidates } from "../../services/adminService";
-import { transaction } from "../../redux/slices/candidatesSlice";
-import { addCandidates } from "../../redux/thunks/candidatesThunks";
-import Message from "./Message";
+import { getCandidates } from "../../../services/adminService";
+import { useDispatch, useSelector } from "react-redux";
+import { transaction, updateState } from "../../../redux/slices/candidatesSlice";
+import { addCandidates } from "../../../redux/thunks/candidatesThunks";
+import Message from "../Message";
 
 const CandidateList = (props) => {
     const dispatch = useDispatch();
@@ -33,6 +33,7 @@ const CandidateList = (props) => {
     }
 
     const onClickAddCandidatesHandler = () => {
+        dispatch(updateState());
         const size = candidateList.length;
         const allCanidadtes = [];
         for(let i=0;i<size;i++){
@@ -64,15 +65,8 @@ const CandidateList = (props) => {
                         </tbody>
                 })}
             </Table>
-            {isEmpty(addCandidatesTx) ? 
-                <Button variant="success" size="lg" onClick={ onClickAddCandidatesHandler }>Add Candidates</Button>
-                :
-                (addCandidatesTx.error && <Message message={addCandidatesTx.error}/>)
-                ||
-                (addCandidatesTx.reason && <Message message={addCandidatesTx.reason}/>)
-                ||
-                (addCandidatesTx.response && <Message message={addCandidatesTx.response.transactionHash}/>)
-            }
+            <Button variant="success" size="lg" onClick={ onClickAddCandidatesHandler }>Add Candidates</Button>
+            {!isEmpty(addCandidatesTx) && <Message data={addCandidatesTx}/>}
         </>
     )
 }

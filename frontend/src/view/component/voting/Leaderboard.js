@@ -1,19 +1,13 @@
 import React, { useEffect } from "react";
 import { Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { winners} from "../../redux/slices/candidatesSlice";
-import { getWinningCandidates } from "../../redux/thunks/candidatesThunks";
-//import {  candidatesData, candidatesHasErrors, candidatesLoading, candidatesError } from "../../redux/slices/candidatesSlice";
-//import { getWinningCandidates } from "../../redux/actions/candidatesActions";
+import { winners} from "../../../redux/slices/candidatesSlice";
+import { getWinningCandidates } from "../../../redux/thunks/candidatesThunks";
 
 const Leaderboard = (props) => {
     const dispatch = useDispatch();
 
     const leaderboardData = useSelector(winners);
-    // const gettingLeaderboardLoading = useSelector(candidatesLoading);
-    // const gettingLeaderboardHasError = useSelector(candidatesHasErrors);
-    // const leaderboardData = useSelector(candidatesData);
-    // const gettingLeaderboardError = useSelector(candidatesError);
 
     useEffect(() => {
         dispatch(getWinningCandidates());
@@ -21,10 +15,10 @@ const Leaderboard = (props) => {
 
     return (
         <>
-            <h3>Winners candidate</h3>
-            {/* {gettingLeaderboardLoading && <Message message={globalConstants.LOADING}/>}
-            {gettingLeaderboardHasError ?
-                <Message message={gettingLeaderboardError}/> :  */}
+            <div className = "notice">
+                Congrats, you successfully voted!! <br/>    
+                You can now see current 3 leading candidates who will represent Wakanda!
+            </div>
                 <Table striped bordered hover size="sm">
                     <thead>
                         <tr>
@@ -39,7 +33,7 @@ const Leaderboard = (props) => {
                     {leaderboardData.response && leaderboardData.response.map((d, index) =>{
                         return <tbody key={index}>
                                 <tr>
-                                    <td>{index}</td>
+                                    <td>{index+1}</td>
                                     <td>{d[0]}</td>
                                     <td>{d[1]}</td>
                                     <td>{d[2]}</td>
@@ -48,7 +42,6 @@ const Leaderboard = (props) => {
                             </tbody>
                     })}
                 </Table>
-            {/* } */}
         </>
     )
 }

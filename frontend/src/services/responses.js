@@ -15,7 +15,7 @@ export const callAndCheckResponse = async (url, method, errorMessage, validator,
 		});
 		const validResponse = validator(response);
 		return validResponse ? 
-            createOKResponse(response.status, response.data)
+            createOKResponse( response.data)
 			: 
             createErrorResponse({ message: errorMessage }, errorMessage);
 	} catch (error) {
@@ -23,7 +23,7 @@ export const callAndCheckResponse = async (url, method, errorMessage, validator,
 	}
 };
 
-const createOKResponse = (statusCode, data) => {
+export const createOKResponse = (data) => {
   if (data.responseCode && data.responseCode !== 200) {
     return createErrorResponse(data.responseCode, data.message);
   }
@@ -33,6 +33,14 @@ const createOKResponse = (statusCode, data) => {
     Data: createResponseData(data),
   };
 }
+  
+export const createErrorResponse = (errorCode, errorMessage) => {
+  return {
+    OK: false,
+    StatusCode: errorCode.status,
+    Error: createResponseData(errorMessage)
+  };
+}
 
 const createResponseData = (data) => {
   return {
@@ -40,12 +48,4 @@ const createResponseData = (data) => {
     reason: isValid(data, data.reason) && data.reason, 
     error: isString(data) ? data : ""
   }
-}
-  
-const createErrorResponse = (errorCode, errorMessage) => {
-  return {
-    OK: false,
-    StatusCode: errorCode.status,
-    Error: createResponseData(errorMessage)
-  };
 }

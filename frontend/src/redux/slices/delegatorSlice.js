@@ -4,7 +4,12 @@ import { addDelegator, getDelegators } from "../thunks/delegatorThunks";
 export const delegatorSlice = createSlice({
   name: "delegator",
   initialState: {delegators: [], loading: "idle"},
-  reducers: {},
+  reducers: {
+    updateState: (state) =>{
+      state.delegators = [];
+      state.loading = "idle";
+    }
+  },
   extraReducers: {
     [addDelegator.fulfilled] : (state, action) => {
       state.delegators = action.payload;
@@ -14,6 +19,8 @@ export const delegatorSlice = createSlice({
     }
   }
 })
+
+export const {updateState} = delegatorSlice.actions;
 
 export const delegators = state => state.delegator.delegators;
 

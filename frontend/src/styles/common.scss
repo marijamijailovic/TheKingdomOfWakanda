@@ -1,0 +1,45 @@
+.notice {
+	margin: 1rem 0rem 1rem 0;
+	font-weight: bold;
+	font-style: oblique;
+	text-align: center;
+
+	label {
+		font-size: 10px;
+	}
+}
+
+.btn {
+	margin: 1rem 0rem 1rem 0rem;
+}
+
+.c-wakanda-form {
+	margin: 1rem;
+	padding: 0rem 1rem 0rem 1rem;
+}
+
+label {
+	margin: 1rem 0rem 1rem 0rem;
+}
+
+form {
+	.form-check {
+		display: inline-flex;
+		font-size: 25px;
+		margin-right: 5rem;
+
+		&-label {
+			margin: 0rem 0rem 0rem 1rem;
+		}
+	}
+
+	.rc-input-number-input {
+		color: #212529;
+		border: 1px solid #ced4da;
+		border-radius: 0.25rem;
+	}
+}
+
+.table {
+	margin: 1rem 0rem 1rem 0;
+}

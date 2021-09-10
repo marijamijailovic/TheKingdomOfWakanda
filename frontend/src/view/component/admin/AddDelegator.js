@@ -1,10 +1,11 @@
 import React, {useState} from "react";
 import { Form, Button } from "react-bootstrap";
+import { isEmpty } from "underscore";
+import { isValidWakandaAddresses } from "../../../helpers/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { isValidWakandaAddresses } from "../../helpers/utils";
-import { delegators } from "../../redux/slices/delegatorSlice";
-import { addDelegator } from "../../redux/thunks/delegatorThunks";
-import Message from "../component/Message";
+import { delegators, updateState } from "../../../redux/slices/delegatorSlice";
+import { addDelegator } from "../../../redux/thunks/delegatorThunks";
+import Message from "../Message";
 
 const AddDelegator = (props) => {
     const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const AddDelegator = (props) => {
         setInvalidAddress(false);
         const address = e.currentTarget.value;
         setDelegatorAddress(address);
+        dispatch(updateState());
     }
 
     function handleSubmitAddDelegator(event) {
@@ -31,7 +33,7 @@ const AddDelegator = (props) => {
 
     return (
         <div className = "c-app c-default-layout flex-row align-items-center">
-            <Form>
+            <Form className="c-wakanda-form">
                 <Form.Group>
                     <Form.Label htmlFor="delegatorAddress">Input delegator address:</Form.Label>
                     <Form.Control type="text" name="delegatorAddress" isInvalid={invalidAddress} value={delegatorAddress} required onChange={(e) => onDelegatorAddressChange(e)} /> 
@@ -44,10 +46,11 @@ const AddDelegator = (props) => {
                         Register delegator  
                     </Button>
                 </Form.Group>
+                {!isEmpty(addDelegatorsTx) && <Message data={addDelegatorsTx}/>}
             </Form>
-            {addDelegatorsTx.error && <Message message={addDelegatorsTx.error}/>}
+            {/* {addDelegatorsTx.error && <Message message={addDelegatorsTx.error}/>}
             {addDelegatorsTx.reason && <Message message={addDelegatorsTx.reason}/>}
-            {addDelegatorsTx.response && <Message message={addDelegatorsTx.response.transactionHash}/>}
+            {addDelegatorsTx.response && <Message message={addDelegatorsTx.response.transactionHash}/>} */}
         </div>
     );
 };
