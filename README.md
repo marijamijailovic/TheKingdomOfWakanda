@@ -11,8 +11,8 @@ Dapp has the following features:
   - A local NodeJS Server that collects data from the blockchain.
 
 Smart contract deployed on kovan testnet:
-  - [https://kovan.etherscan.io/address/0xc4015ebe1189499793295d1968cd64961bf5f25b] (ERC20 wakanda token)
-  - [https://kovan.etherscan.io/address/0x0e2ccfb803f0f6669909abe6a1617d0fb3317cd5] (Voting contract)
+  - [] (ERC20 wakanda token)
+  - [] (Voting contract)
  
 # :computer: Set up
 
@@ -23,10 +23,18 @@ Compile contrats:
   ```navigate to smartcontract folder (cd smartcontract)```
   ```npx hardhat compile```
 
-Create .env file in backend and smartcontract folder and set it up to own private values, there is .env.example as the example. Also, depending on the testnet network you choose, you will need to change the variables inside backend/contract/congif.js.
+Create .env file in backend, frontend and smartcontract folder and set it up to own private values, there is .env.example as the example.
 
 # :computer: Run application
+Run local blockchain network:
+  ```navigate to smartcontract folder(cd smartcontract)```
+  ```npx hardhat compile```
+  ```npx hardhat node```
   
+Deploy smartcontrat:
+  ```navigate to smartcontract folder(cd smartcontract)```
+  ```npx hardhat run --network localhost scripts/deploy.js```
+
 Run node js server:
   ```navigate to backend folder(cd backend)```
   ```npm install```
