@@ -10,11 +10,11 @@ contract Voting {
     Candidate[] candidates;
     address[] delegators;
     mapping(address => WakandaVoter) wakandaVoter;
-    uint256[] leaderboard;
+    Candidate[3] winners;
     WKNDToken wknd;
     uint256 votingToken;
 
-    event NewChallenger(uint256[] indexed leaderboard);
+    event NewChallenger(Candidate[] leaderboard);
 
     struct Candidate {
         string name;
@@ -145,10 +145,6 @@ contract Voting {
 
         candidates[_candidateId].score += _amountOfVotes;
 
-        if (!isCandidateInLeaderboard(_candidateId)) {
-            updateLeaderboard(_candidateId);
-        }
-
         wknd.burn(_wakandaAddress, _amountOfVotes);
 
         return;
@@ -194,58 +190,16 @@ contract Voting {
         return;
     }
 
-    function updateLeaderboard(uint256 _candidateId) private {
-        uint256 size = leaderboard.length;
-        if (size < 3) {
-            leaderboard.push(_candidateId);
-            emit NewChallenger(leaderboard);
-        } else {
-            uint256 min = candidateWithLowestScoreInLeaderboard();
-            if (
-                candidates[_candidateId].score >
-                candidates[leaderboard[min]].score
-            ) {
-                leaderboard[min] = _candidateId;
-                emit NewChallenger(leaderboard);
-            }
+    function newChallenger(Candidate[] memory _leaderboard) public {
+        emit NewChallenger(_leaderboard);
+
+        for (uint256 i = 0; i < _leaderboard.length; i++) {
+            winners[i] = _leaderboard[i];
         }
+        return;
     }
 
-    function isCandidateInLeaderboard(uint256 _candidateId)
-        private
-        view
-        returns (bool)
-    {
-        for (uint256 i = 0; i < leaderboard.length; i++) {
-            if (leaderboard[i] == _candidateId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function candidateWithLowestScoreInLeaderboard()
-        private
-        view
-        returns (uint256)
-    {
-        uint256 min_i = 0;
-        for (uint256 i = 1; i < leaderboard.length; i++) {
-            if (
-                candidates[leaderboard[i]].score <=
-                candidates[leaderboard[min_i]].score
-            ) {
-                min_i = i;
-            }
-        }
-        return min_i;
-    }
-
-    function winningCandidates() external view returns (Candidate[] memory) {
-        Candidate[] memory winners = new Candidate[](leaderboard.length);
-        for (uint256 i = 0; i < leaderboard.length; i++) {
-            winners[i] = candidates[leaderboard[i]];
-        }
+    function winningCandidates() public view returns (Candidate[3] memory) {
         return winners;
     }
 }

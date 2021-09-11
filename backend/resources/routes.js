@@ -9,14 +9,14 @@ routes = (app) => {
         next();
     });
 
-    app.post("/addCandidates", adminController.addCandidates);
-    app.post("/addDelegators", adminController.addDelegators);
+    app.post("/addCandidates", adminController.addAllCandidates);
+    app.post("/addDelegators", adminController.addDelegator);
     app.post("/registration", wakandaController.wakandaRegistration);
 
     app.get("/getWakandaStatus", wakandaController.getWakandaStatus);
     app.get("/leaderboard", wakandaController.getWinningCandidates);
-    app.get("/getCandidates", wakandaController.getCandidates);
-    app.get("/getDelegators", wakandaController.getDelegators);
+    app.get("/getCandidates", wakandaController.getAllCandidates);
+    app.get("/getDelegators", wakandaController.getAllDelegators);
 }
 
 module.exports = routes;

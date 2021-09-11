@@ -48,9 +48,6 @@ const AddDelegator = (props) => {
                 </Form.Group>
                 {!isEmpty(addDelegatorsTx) && <Message data={addDelegatorsTx}/>}
             </Form>
-            {/* {addDelegatorsTx.error && <Message message={addDelegatorsTx.error}/>}
-            {addDelegatorsTx.reason && <Message message={addDelegatorsTx.reason}/>}
-            {addDelegatorsTx.response && <Message message={addDelegatorsTx.response.transactionHash}/>} */}
         </div>
     );
 };

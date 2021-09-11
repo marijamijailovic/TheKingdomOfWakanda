@@ -5,12 +5,12 @@ const isRegistered = async (address) => {
     return registered;
 }
 
-const isVoted = async (address) => {
-    const voted = await voting.isWakandaVoted(address);
-    return voted;
+const completeRegistration = async (wakandaAddress, votingToken) => {
+    const response = await voting.registration(wakandaAddress, votingToken);
+    return response;
 }
 
 module.exports = {
     isRegistered,
-    isVoted
+    completeRegistration
 }

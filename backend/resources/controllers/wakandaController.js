@@ -1,19 +1,18 @@
-const wkndToken = require("../../contract/wkndToken");
-const voting = require("../../contract/voting");
 const constants = require("../../constants");
-const helpers = require("../helpers/utils");
+const uc_registration = require("../user_cases/uc_registration");
+const uc_voting = require("../user_cases/uc_voting");
 
 const wakandaRegistration = async (req, res) => { 
     try {
         const wakandaAddress = req.body.wakandaAddress;
         const votingToken = 1;
         if(wakandaAddress){
-            const registered = await helpers.isRegistered(wakandaAddress);
+            const registered = await uc_registration.isRegistered(wakandaAddress);
             if(!registered) {
-                const response = await voting.registration(wakandaAddress, votingToken);
+                const response = await uc_registration.completeRegistration(wakandaAddress, votingToken);
                 res.status(200).json({"status":"success", response});
             } else {
-                const voted = await helpers.isVoted(wakandaAddress);
+                const voted = await uc_voting.isVoted(wakandaAddress);
                 if(!voted){
                     res.status(200).json({"status":"success", "reason": constants.MESSAGE.ALREADY_REGISTERED});
                 } else {
@@ -32,8 +31,8 @@ const getWakandaStatus = async (req,res)=>{
     try {
         const wakandaAddress = req.query.wakandaAddress;
         if(wakandaAddress){
-            const balance = await wkndToken.getBalance(wakandaAddress);
-            const registered = await helpers.isRegistered(wakandaAddress);
+            const balance = await uc_voting.getBalance(wakandaAddress);
+            const registered = await uc_registration.isRegistered(wakandaAddress);
             const response = {balance, registered};
             res.status(200).json({"status":"success", response});
         }else{
@@ -44,40 +43,37 @@ const getWakandaStatus = async (req,res)=>{
     }
 }
 
-const getCandidates = async(req, res) => {
+const getAllCandidates = async(req, res) => {
     try{
-        const response = await voting.getCandidates();
+        const response = await uc_voting.getCandidates();
         res.status(200).json({"status":"success", response});
     } catch (error) {
         res.status(500).json({"status":"failed", "reason": error.message});
     }
 }
 
-const getDelegators = async(req, res) => {
+const getAllDelegators = async(req, res) => {
     try{
-        const response = await voting.getDelegators();
+        const response = await uc_voting.getDelegators();
         res.status(200).json({"status":"success", response});
     } catch (error) {
         res.status(500).json({"status":"failed", "reason": error.message});
     }
 }
 
-
-const getWinningCandidates = async (req,res) => {
-    try {
-        const winners = await voting.getWinningCandidates();
-        const response = [...winners];
-        response.sort((c1, c2)=> (c2.score-c1.score));
+const getWinningCandidates = async(req, res) => {
+    try{
+        const response = await uc_voting.getWinningCandidates();
         res.status(200).json({"status":"success", response});
     } catch (error) {
-        res.status(500).json({"status":"failed", "reason":error.message});
+        res.status(500).json({"status":"failed", "reason": error.message});
     }
 }
 
 module.exports = {
     wakandaRegistration,
     getWakandaStatus,
-    getCandidates,
-    getDelegators,
+    getAllCandidates,
+    getAllDelegators,
     getWinningCandidates,
 }

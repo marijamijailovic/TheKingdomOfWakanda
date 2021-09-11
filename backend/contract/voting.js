@@ -81,29 +81,30 @@ const registration = async(wakandaAddress, votingToken) => {
     }
 }
 
-const getWinningCandidates = async() => {
-    try {
-        const response = await votingContract.methods.winningCandidates().call();
-        return response;
-    } catch(error) {
-        console.log(error);
-        throw new Error(error.message);
-    }
+const getLastWinners = async() => {
+    const events = await votingContract.getPastEvents("NewChallenger");
+    const lastWinners = events.length === 0 ? events : events[0].returnValues[0];
+    return lastWinners;
 }
 
-const vote = async(wakandaAddress, candidateId, amountOfVotes) => {
-    try{
-        const response = await votingContract.methods.vote(wakandaAddress, candidateId, amountOfVotes).send({from: wakandaAddress});
-        return response;
-    } catch(error) {
-        console.log(error);
-        throw new Error(error.message);
-    }
+const newChallenger = async(leaderboard) => {
+    const response = await votingContract.methods.newChallenger(leaderboard).send();
+    return response;
 }
 
 const delegateVote = async(wakandaAddress, delegatorAddress) => {
     try{
         const response = await votingContract.methods.delegateVote(wakandaAddress, delegatorAddress).send({from: wakandaAddress});
+        return response;
+    } catch(error) {
+        console.log(error);
+        throw new Error(error.message);
+    }
+}
+
+const getWinningCandidates = async() => {
+    try {
+        const response = await votingContract.methods.winningCandidates().call();
         return response;
     } catch(error) {
         console.log(error);
@@ -120,7 +121,8 @@ module.exports = {
     isWakandaRegistered,
     isWakandaVoted,
     registration,
-    getWinningCandidates,
-    vote,
-    delegateVote
+    getLastWinners,
+    newChallenger,
+    delegateVote,
+    getWinningCandidates
 }

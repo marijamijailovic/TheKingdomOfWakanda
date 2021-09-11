@@ -10,7 +10,9 @@ const MESSAGE = {
     ALREADY_VOTED: "Wakanda has been voted already",
     ALREADY_ADDED: "Already added",
 
-    SUCCESS_REGISTRATION: "Wakanda successfully registred"
+    SUCCESS_REGISTRATION: "Wakanda successfully registred",
+
+    NO_NEW_CHALLENGER: "No new challenger"
 }
 
 module.exports = {
