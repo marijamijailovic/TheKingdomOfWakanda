@@ -5,6 +5,7 @@ import { VOTING_CONTRACT_ADDRESS, API_URL } from "../config";
 import { createErrorResponse, createOKResponse } from "./responses";
 
 const web3 = new Web3(Web3.givenProvider || API_URL);
+console.log(web3)
 const voting = new web3.eth.Contract(Voting.abi, VOTING_CONTRACT_ADDRESS);
 
 export const vote = async(wakandaAddress, candidateId, amountOfVotes) => {

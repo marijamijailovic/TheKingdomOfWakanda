@@ -1,9 +1,11 @@
 const contract = require("./instance");
 const votingContract = contract.votingContract;
+const transaction = require("./transaction");
 
 const addCandidates = async(candidates) => {
     try {
-        const response = await votingContract.methods.addCandidates(candidates).send();
+        const encoded = votingContract.methods.addCandidates(candidates).encodeABI();
+        const response = await transaction.signing(contract.votingContract._address, encoded);
         return response;
     } catch(error) {
         throw new Error(error.message);
@@ -30,7 +32,8 @@ const getCandidatesSize = async() => {
 
 const addDelegators = async(delegatorAddress) => {
     try {
-        const response = await votingContract.methods.addDelegators(delegatorAddress).send();
+        const encoded = votingContract.methods.addDelegators(delegatorAddress).encodeABI();
+        const response = await transaction.signing(contract.votingContract._address, encoded);
         return response;
     } catch(error) {
         throw new Error(error.message);
@@ -57,7 +60,8 @@ const getWakanda = async(wakandaAddress) => {
 
 const registration = async(wakandaAddress) => {
     try {
-        const response = await votingContract.methods.registration(wakandaAddress).send();
+        const encoded = votingContract.methods.registration(wakandaAddress).encodeABI();
+        const response = await transaction.signing(contract.votingContract._address, encoded);
         return response;
     } catch(error) {
         throw new Error(error.message);
@@ -65,24 +69,27 @@ const registration = async(wakandaAddress) => {
 }
 
 const getLatestWinners = async() => {
-    const events = await votingContract.getPastEvents("NewChallenger",{fromBlock:0, toBlock:"latest"});
+    const events = await votingContract.getPastEvents("NewChallenger",{ 
+        fromBlock:0, toBlock:"latest"
+    });
     const lastWinners = events.length !== 0 ? events[events.length-1].returnValues[0] : [];
     return lastWinners;
 }
 
 const newChallenger = async(leaderboard) => {
-    const response = await votingContract.methods.newChallenger(leaderboard).send();
+    const encoded = votingContract.methods.newChallenger(leaderboard).encodeABI();
+    const response = await transaction.signing(contract.votingContract._address, encoded);
     return response;
 }
 
-const delegateVote = async(wakandaAddress, delegatorAddress) => {
-    try{
-        const response = await votingContract.methods.delegateVote(wakandaAddress, delegatorAddress).send({from: wakandaAddress});
-        return response;
-    } catch(error) {
-        throw new Error(error.message);
-    }
-}
+// const delegateVote = async(wakandaAddress, delegatorAddress) => {
+//     try{
+//         const response = await votingContract.methods.delegateVote(wakandaAddress, delegatorAddress).send({from: wakandaAddress});
+//         return response;
+//     } catch(error) {
+//         throw new Error(error.message);
+//     }
+// }
 
 const getWinningCandidates = async() => {
     try {
@@ -103,6 +110,6 @@ module.exports = {
     registration,
     getLatestWinners,
     newChallenger,
-    delegateVote,
+    //delegateVote,
     getWinningCandidates
 }

@@ -14,8 +14,12 @@ const votingContractAddress = config.VOTING_CONTRACT_ADDRESS;
 const votingABI = compiledvotingContract.abi;
 
 const defaultAddress = config.DEFAULT_ADDRESS;
+const privateKey = config.PRIVATE_KEY;
 
 module.exports = {
+    web3: web3,
+    defaultAddress: defaultAddress,
+    privateKey: privateKey,
     wakandaTokenContract : new web3.eth.Contract(wakandaTokenABI, wakandaTokenContractAddress, {from: defaultAddress}),
     votingContract : new web3.eth.Contract(votingABI, votingContractAddress, {from: defaultAddress})
 } 
