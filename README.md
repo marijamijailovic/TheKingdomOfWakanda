@@ -19,7 +19,7 @@ Smart contract deployed on kovan testnet:
 Install hardhat:
   ```npm install --save-dev hardhat```
 
-Compile contrats:
+Compile contracts:
   ```navigate to smartcontract folder (cd smartcontract)```
   ```npx hardhat compile```
 
