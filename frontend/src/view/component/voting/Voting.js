@@ -59,16 +59,18 @@ const VotingPage = (props) => {
                         <div className = "notice">
                             {`Your voting address is ${wakandaAddress}, and you can send up to ${balanceOfWKND} vote!`}<br/>
                         </div>
-                        <Form className="c-wakanda-form c-voting-option">
-                            <Form.Check>
-                                <Form.Check.Input type="radio" value={true} name="vote" checked={wantToVote} onChange={onChangeRadioButtonHandler}/>
-                                <Form.Check.Label>Vote</Form.Check.Label>
-                            </Form.Check>
-                            <Form.Check>
-                                <Form.Check.Input type="radio" value={false} name="vote" checked={!wantToVote} onChange={onChangeRadioButtonHandler}/>
-                                <Form.Check.Label>Delegate</Form.Check.Label>
-                            </Form.Check>
-                        </Form>
+                        {!delegator && 
+                            <Form className="c-wakanda-form c-voting-option">
+                                    <Form.Check>
+                                        <Form.Check.Input type="radio" value={true} name="vote" checked={wantToVote} onChange={onChangeRadioButtonHandler}/>
+                                        <Form.Check.Label>Vote</Form.Check.Label>
+                                    </Form.Check>
+                                    <Form.Check>
+                                        <Form.Check.Input type="radio" value={false} name="vote" checked={!wantToVote} onChange={onChangeRadioButtonHandler}/>
+                                        <Form.Check.Label>Delegate</Form.Check.Label>
+                                    </Form.Check>
+                            </Form>
+                        }
                         {wantToVote ? 
                             <VotingComponent wakandaAddress={wakandaAddress} balanceOfWKND={balanceOfWKND}/>
                             : 

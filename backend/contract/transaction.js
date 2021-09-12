@@ -9,7 +9,6 @@ const signing = async(to, encoded) => {
         const gasLimit = latestBlock.gasLimit;
         const tx = {
             to: to,
-            chainId: 42,
             gasPrice: gasPrice,
             gasLimit: gasLimit,
             value: "0x0",

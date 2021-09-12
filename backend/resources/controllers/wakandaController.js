@@ -82,23 +82,11 @@ const getWakandaBalance = async (req, res, next) => {
     }
 }
 
-const vote = async(req, res, next) => {
-    try {
-        const params = req.body.params;
-        console.log(params);
-        console.log("Da li je stiglo nesto");
-        const result = await uc_voting.vote(params);
-    } catch(error) {
-        next(error)
-    }
-}
-
 module.exports = {
     wakandaRegistration,
     getAllCandidates,
     getAllDelegators,
     getWinningCandidates,
     getWakandaStatus,
-    getWakandaBalance,
-    vote
+    getWakandaBalance
 }
