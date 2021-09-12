@@ -11,8 +11,8 @@ Dapp has the following features:
   - A local NodeJS Server that collects data from the blockchain.
 
 Smart contract deployed on kovan testnet:
-  - [] (ERC20 wakanda token)
-  - [] (Voting contract)
+  - [0x93cB58B433D9A1898744925DEB86b7F35D134107] (ERC20 wakanda token)
+  - [0xBC84Cb91BA79e67d5b3cB5728154Dd0bb565E5c3] (Voting contract)
  
 # :computer: Set up
 
@@ -31,7 +31,7 @@ Run local blockchain network:
   ```npx hardhat compile```
   ```npx hardhat node```
   
-Deploy smartcontrat:
+Deploy smart contract:
   ```navigate to smartcontract folder(cd smartcontract)```
   ```npx hardhat run --network localhost scripts/deploy.js```
 
@@ -45,4 +45,4 @@ Run frontend:
   ```npm install```
   ```npm start```
 
-First go to ```/admin``` page to add candidates and delegator for voting, after that you could go to / and vote.
+** First go to ```/admin``` page to add candidates and delegator for voting, after that you could go to / and vote. **
