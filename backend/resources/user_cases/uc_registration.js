@@ -1,16 +1,10 @@
 const voting = require("../../contract/voting");
 
-const isRegistered = async (address) => {
-    const registered = await voting.isWakandaRegistered(address);
-    return registered;
-}
-
-const completeRegistration = async (wakandaAddress, votingToken) => {
-    const response = await voting.registration(wakandaAddress, votingToken);
+const completeRegistration = async (wakandaAddress) => {
+    const response = await voting.registration(wakandaAddress);
     return response;
 }
 
 module.exports = {
-    isRegistered,
     completeRegistration
 }

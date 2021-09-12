@@ -1,22 +1,18 @@
+const express = require('express');
 const adminController = require("./controllers/adminController");
 const wakandaController = require("./controllers/wakandaController");
 
-routes = (app) => {
-    app.use(function(req, res, next) {
-        res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Methods", "GET,POST");
-        res.header("Access-Control-Allow-Headers", "Content-Type");
-        next();
-    });
+const router = express.Router();
 
-    app.post("/addCandidates", adminController.addAllCandidates);
-    app.post("/addDelegators", adminController.addDelegator);
-    app.post("/registration", wakandaController.wakandaRegistration);
+router.post("/addCandidates", adminController.addAllCandidates);
+router.post("/addDelegators", adminController.addDelegator);
+router.post("/registration", wakandaController.wakandaRegistration);
 
-    app.get("/getWakandaStatus", wakandaController.getWakandaStatus);
-    app.get("/leaderboard", wakandaController.getWinningCandidates);
-    app.get("/getCandidates", wakandaController.getAllCandidates);
-    app.get("/getDelegators", wakandaController.getAllDelegators);
-}
+router.get("/getWakandaStatus", wakandaController.getWakandaStatus);
+router.get("/getWakandaBalance", wakandaController.getWakandaBalance);
+router.get("/leaderboard", wakandaController.getWinningCandidates);
+router.get("/getCandidates", wakandaController.getAllCandidates);
+router.get("/getDelegators", wakandaController.getAllDelegators);
 
-module.exports = routes;
+
+module.exports = router;

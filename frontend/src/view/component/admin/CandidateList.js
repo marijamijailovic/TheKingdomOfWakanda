@@ -4,7 +4,7 @@ import { globalConstants } from "../../../constants/global";
 import { isEmpty } from "underscore";
 import { getCandidates } from "../../../services/adminService";
 import { useDispatch, useSelector } from "react-redux";
-import { transaction, updateState } from "../../../redux/slices/candidatesSlice";
+import { transaction, updateCandidateState } from "../../../redux/slices/candidatesSlice";
 import { addCandidates } from "../../../redux/thunks/candidatesThunks";
 import Message from "../Message";
 
@@ -33,13 +33,14 @@ const CandidateList = (props) => {
     }
 
     const onClickAddCandidatesHandler = () => {
-        dispatch(updateState());
-        const size = candidateList.length;
-        const allCanidadtes = [];
-        for(let i=0;i<size;i++){
-            const candidate = candidateList[i];
-            allCanidadtes.push({...candidate, score:0, id: i});
-        }
+        dispatch(updateCandidateState());
+        const allCanidadtes = candidateList.map((candidate, index) => {
+            return {
+                ...candidate,
+                score: 0,
+                id: index
+            }
+        })
         dispatch(addCandidates(allCanidadtes));
     }
 

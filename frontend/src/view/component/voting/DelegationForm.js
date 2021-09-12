@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDelegators } from "../../../redux/thunks/delegatorThunks";
 import { delegators } from "../../../redux/slices/delegatorSlice";
 import { delegate } from "../../../redux/thunks/votingThunks";
-import { delegateData, updateState } from "../../../redux/slices/votingSlice";
+import { delegateData, updateVotingState } from "../../../redux/slices/votingSlice";
 import Message from "../Message";
 import Leaderboard from "./Leaderboard";
 
@@ -18,6 +18,7 @@ const Delegation = (props) => {
 
     const [selectedDelegator, setSelectedDelegator] = useState("0");
     const [invalidAddress, setInvalidAddress] = useState(false);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
 
     useEffect(()=>{
         dispatch(getDelegators());
@@ -27,11 +28,12 @@ const Delegation = (props) => {
         setInvalidAddress(false);
         const choosendDelegator = event.target.value;
         setSelectedDelegator(choosendDelegator);
+        dispatch(updateVotingState());
     }
 
     const handleSubmitDelegate = (event) => {
         event.preventDefault();
-        dispatch(updateState());
+        dispatch(updateVotingState());
         if(selectedDelegator === "0") {
             setInvalidAddress(true);
         } else {
@@ -40,7 +42,7 @@ const Delegation = (props) => {
     }
 
     const handleShowLeaderboard = () => {
-        return <Leaderboard />
+        setShowLeaderboard(true);
     }
 
     return (
@@ -66,7 +68,7 @@ const Delegation = (props) => {
                             onChange={onDelegatorChangeHandler}
                             name="delegator">
                             <option value={0}>Open to select delegator</option>
-                            {delegatorsData.response && delegatorsData.response.map((delegator,index)=>{
+                            {delegatorsData.result && delegatorsData.result.map((delegator,index)=>{
                                     return <option key={index} value={delegator}>{delegator}</option>
                                 })
                             }
@@ -91,6 +93,7 @@ const Delegation = (props) => {
                     </div>
                 }
             </Form>
+            {showLeaderboard && <Leaderboard/>}
         </>
     );
 };

@@ -5,7 +5,7 @@ export const candidatesSlice = createSlice({
   name: "candidates",
   initialState: {candidates: [], transaction: [], winners: [], loading: "idle"},
   reducers: {
-    updateState: (state) =>{
+    updateCandidateState: (state) =>{
       state.candidates = [];
       state.transaction = [];
       state.winners = [];
@@ -25,7 +25,7 @@ export const candidatesSlice = createSlice({
   }
 })
 
-export const {updateState} = candidatesSlice.actions;
+export const {updateCandidateState} = candidatesSlice.actions;
 
 export const candidates = state => state.candidates.candidates;
 export const transaction = state => state.candidates.transaction;

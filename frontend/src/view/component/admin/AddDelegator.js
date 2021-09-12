@@ -3,7 +3,7 @@ import { Form, Button } from "react-bootstrap";
 import { isEmpty } from "underscore";
 import { isValidWakandaAddresses } from "../../../helpers/utils";
 import { useDispatch, useSelector } from "react-redux";
-import { delegators, updateState } from "../../../redux/slices/delegatorSlice";
+import { delegators, updateDelegatorState } from "../../../redux/slices/delegatorSlice";
 import { addDelegator } from "../../../redux/thunks/delegatorThunks";
 import Message from "../Message";
 
@@ -19,7 +19,7 @@ const AddDelegator = (props) => {
         setInvalidAddress(false);
         const address = e.currentTarget.value;
         setDelegatorAddress(address);
-        dispatch(updateState());
+        dispatch(updateDelegatorState());
     }
 
     function handleSubmitAddDelegator(event) {

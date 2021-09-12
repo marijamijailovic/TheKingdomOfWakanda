@@ -1,79 +1,92 @@
 const constants = require("../../constants");
+const STATUS = constants.RESPONSE_STATUS;
+const MESSAGE = constants.MESSAGE;
+const response = require("../../utils/response");
+const createResponse = response.createResponse;
 const uc_registration = require("../user_cases/uc_registration");
 const uc_voting = require("../user_cases/uc_voting");
 
-const wakandaRegistration = async (req, res) => { 
+const wakandaRegistration = async (req, res, next) => { 
     try {
         const wakandaAddress = req.body.wakandaAddress;
-        const votingToken = 1;
         if(wakandaAddress){
-            const registered = await uc_registration.isRegistered(wakandaAddress);
-            if(!registered) {
-                const response = await uc_registration.completeRegistration(wakandaAddress, votingToken);
-                res.status(200).json({"status":"success", response});
+            const wakandaStatus = await uc_voting.getWakandaStatus(wakandaAddress);
+            if(!wakandaStatus.registered) {
+                const result = await uc_registration.completeRegistration(wakandaAddress);
+                createResponse(res, STATUS.OK, STATUS.SUCCESS, result);
+            } else if(!wakandaStatus.hasVoted){
+                createResponse(res, STATUS.OK, STATUS.SUCCESS, MESSAGE.ALREADY_REGISTERED);
             } else {
-                const voted = await uc_voting.isVoted(wakandaAddress);
-                if(!voted){
-                    res.status(200).json({"status":"success", "reason": constants.MESSAGE.ALREADY_REGISTERED});
-                } else {
-                    res.status(200).json({"status":"success", "reason": constants.MESSAGE.ALREADY_VOTED});
-                }
+                createResponse(res, STATUS.OK, STATUS.SUCCESS, MESSAGE.ALREADY_VOTED);
             }
         } else{
-            res.status(400).json({"status":"failed", "reason": constants.MESSAGE.WRONG_INPUT});
+            createResponse(res, constants.RESPONSE_STATUS.NOT_FOUND, constants.RESPONSE_STATUS.FAILED, MESSAGE.WRONG_INPUT);
         }
     } catch(error) {
-        res.status(500).json({"status":"failed", "reason": error.messsage});
+        next(error);
     }
 }
 
-const getWakandaStatus = async (req,res)=>{
+const getAllCandidates = async(req, res, next) => {
+    try{
+        const result = await uc_voting.getCandidates();
+        createResponse(res, STATUS.OK, STATUS.SUCCESS, result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getAllDelegators = async(req, res, next) => {
+    try{
+        const result = await uc_voting.getAllDelegators();
+        createResponse(res, STATUS.OK, STATUS.SUCCESS, result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getWinningCandidates = async(req, res, next) => {
+    try{
+        const result = await uc_voting.getWinningCandidates();
+        createResponse(res, STATUS.OK, STATUS.SUCCESS, result);
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getWakandaStatus = async (req, res, next) => {
     try {
         const wakandaAddress = req.query.wakandaAddress;
         if(wakandaAddress){
-            const balance = await uc_voting.getBalance(wakandaAddress);
-            const registered = await uc_registration.isRegistered(wakandaAddress);
-            const response = {balance, registered};
-            res.status(200).json({"status":"success", response});
+            const result = await uc_voting.getWakandaStatus(wakandaAddress);
+            createResponse(res, STATUS.OK, STATUS.SUCCESS, result);
         }else{
-            res.status(400).json({"status":"failed", "reason": constants.MESSAGE.WRONG_INPUT});
+            createResponse(res, constants.RESPONSE_STATUS.NOT_FOUND, constants.RESPONSE_STATUS.FAILED, MESSAGE.WRONG_INPUT);
         }
     } catch(error) {
-        res.status(500).json({"status":"failed", "reason": error.message});
+        next(error);
     }
 }
 
-const getAllCandidates = async(req, res) => {
-    try{
-        const response = await uc_voting.getCandidates();
-        res.status(200).json({"status":"success", response});
-    } catch (error) {
-        res.status(500).json({"status":"failed", "reason": error.message});
-    }
-}
-
-const getAllDelegators = async(req, res) => {
-    try{
-        const response = await uc_voting.getDelegators();
-        res.status(200).json({"status":"success", response});
-    } catch (error) {
-        res.status(500).json({"status":"failed", "reason": error.message});
-    }
-}
-
-const getWinningCandidates = async(req, res) => {
-    try{
-        const response = await uc_voting.getWinningCandidates();
-        res.status(200).json({"status":"success", response});
-    } catch (error) {
-        res.status(500).json({"status":"failed", "reason": error.message});
+const getWakandaBalance = async (req, res, next) => {
+    try {
+        const wakandaAddress = req.query.wakandaAddress;
+        if(wakandaAddress){
+            const result = await uc_voting.getWakandaBalance(wakandaAddress);
+            createResponse(res, STATUS.OK, STATUS.SUCCESS, result);
+        }else{
+            createResponse(res, constants.RESPONSE_STATUS.NOT_FOUND, constants.RESPONSE_STATUS.FAILED, MESSAGE.WRONG_INPUT);
+        }
+    } catch(error) {
+        next(error);
     }
 }
 
 module.exports = {
     wakandaRegistration,
-    getWakandaStatus,
     getAllCandidates,
     getAllDelegators,
     getWinningCandidates,
+    getWakandaStatus,
+    getWakandaBalance,
 }

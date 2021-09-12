@@ -13,6 +13,8 @@ export const globalConstants = {
     FAILED_GETING_LEADERBOARD: "Geting winning candidate failed",
     FAILED_GETING_CANIDATES: "Geting candidates failed",
     FAILED_GETING_DELEGATORS: "Getting delegators failed",
+    FAILED_GETING_WAKANDA: "Getting wakanda state failed",
+    FAILED_GETING_WAKANDA_BALANCE: "Getting wakanda balance failed",
 
     FAILED_ADDING_CANIDATES: "Adding candidates failed",
     FAILED_ADDING_DELEGATOR: "Adding delegator failed",

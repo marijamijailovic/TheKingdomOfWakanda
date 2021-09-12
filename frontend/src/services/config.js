@@ -4,7 +4,7 @@ export const REST_METHOD = {
 }
 
 export const CONFIG = {
-    URL: "http://localhost:8082"
+    URL: "http://localhost:8082/api"
 }
 
 export const CANDIDATES_LIST = {

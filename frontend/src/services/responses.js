@@ -1,7 +1,5 @@
 import axios from "axios";
 import { CONFIG } from "./config";
-import { isValid } from "../helpers/utils";
-import { isString } from "underscore";
 
 export const callAndCheckResponse = async (url, method, errorMessage, validator, data) => {
 	try {
@@ -15,37 +13,26 @@ export const callAndCheckResponse = async (url, method, errorMessage, validator,
 		});
 		const validResponse = validator(response);
 		return validResponse ? 
-            createOKResponse( response.data)
+      createOKResponse(response.data)
 			: 
-            createErrorResponse({ message: errorMessage }, errorMessage);
+      createErrorResponse({message : errorMessage}, errorMessage);
 	} catch (error) {
 		return createErrorResponse(error, errorMessage);
 	}
 };
 
 export const createOKResponse = (data) => {
-  if (data.responseCode && data.responseCode !== 200) {
-    return createErrorResponse(data.responseCode, data.message);
-  }
   return {
     OK: true,
     StatusCode: 200,
-    Data: createResponseData(data),
+    Data: data,
   };
 }
   
 export const createErrorResponse = (errorCode, errorMessage) => {
   return {
     OK: false,
-    StatusCode: errorCode.status,
-    Error: createResponseData(errorMessage)
+    StatusCode: errorCode ? errorCode.status : 500,
+    Error: {error : errorMessage}
   };
-}
-
-const createResponseData = (data) => {
-  return {
-    response: isValid(data, data.response) && data.response, 
-    reason: isValid(data, data.reason) && data.reason, 
-    error: isString(data) ? data : ""
-  }
 }

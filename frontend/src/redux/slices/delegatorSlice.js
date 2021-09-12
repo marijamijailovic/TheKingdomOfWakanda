@@ -5,7 +5,7 @@ export const delegatorSlice = createSlice({
   name: "delegator",
   initialState: {delegators: [], loading: "idle"},
   reducers: {
-    updateState: (state) =>{
+    updateDelegatorState: (state) =>{
       state.delegators = [];
       state.loading = "idle";
     }
@@ -20,7 +20,7 @@ export const delegatorSlice = createSlice({
   }
 })
 
-export const {updateState} = delegatorSlice.actions;
+export const {updateDelegatorState} = delegatorSlice.actions;
 
 export const delegators = state => state.delegator.delegators;
 

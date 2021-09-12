@@ -1,6 +1,7 @@
 import React from "react";
 import { Alert } from "react-bootstrap";
 import { globalConstants } from "../../constants/global";
+import { isString } from "underscore";
 
 const Message = (props) => {
     const {data} = props;
@@ -9,12 +10,12 @@ const Message = (props) => {
         return <Alert variant="danger">{data.error}</Alert>
     }
 
-    if (data.reason) {
-        return <Alert variant="warning">{data.reason}</Alert>
+    if (isString(data.result)) {
+        return <Alert variant="warning">{data.result}</Alert>
     }
 
-    if (data.response && data.response.transactionHash) {
-        return <Alert variant="success">{`${globalConstants.SUCCESS} transaction hash is ${data.response.transactionHash}`}</Alert>
+    if (data.result && data.result.transactionHash) {
+        return <Alert variant="success">{`${globalConstants.SUCCESS} transaction hash is ${data.result.transactionHash}`}</Alert>
     }
 
     return <></>

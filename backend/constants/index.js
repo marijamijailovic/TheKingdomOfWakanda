@@ -3,6 +3,14 @@ const PATH = {
     COMPILED_VOTING: "../../frontend/src/artifacts/contracts/Voting.sol/Voting.json"
 }
 
+const RESPONSE_STATUS = {
+    FAILED: "failed",
+    SUCCESS: "success",
+    SERVER_ERROR: 500,
+    OK: 200,
+    NOT_FOUND: 400,
+}
+
 const MESSAGE = {
     WRONG_INPUT: "Wrong input",
     
@@ -17,5 +25,6 @@ const MESSAGE = {
 
 module.exports = {
     PATH: PATH,
+    RESPONSE_STATUS: RESPONSE_STATUS,
     MESSAGE: MESSAGE
 }

@@ -18,3 +18,12 @@ export const getWakandaStatus = createAsyncThunk("wakanda/getWakandaStatus", asy
         return response.Error;
     }
 });
+
+export const getWakandaBalance = createAsyncThunk("wakanda/getWakandaBalance", async(wakandaAddress) => {
+    const response = await wakandaService.getWakandaBalance(wakandaAddress);
+    if(response.OK) {
+        return response.Data;
+    } else {
+        return response.Error;
+    }
+});

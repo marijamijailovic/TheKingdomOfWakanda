@@ -6,15 +6,15 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./WKNDToken.sol";
 
 contract Voting {
+    uint256 constant VOTING_TOKEN = 1;
     address owner;
     Candidate[] candidates;
     address[] delegators;
     mapping(address => WakandaVoter) wakandaVoter;
-    Candidate[3] winners;
+    uint256[3] winnersIds = [99, 99, 99];
     WKNDToken wknd;
-    uint256 votingToken;
 
-    event NewChallenger(Candidate[] leaderboard);
+    event NewChallenger(uint256[] winnersIds);
 
     struct Candidate {
         string name;
@@ -35,7 +35,6 @@ contract Voting {
     constructor(WKNDToken _wknd) {
         owner = msg.sender;
         wknd = WKNDToken(_wknd);
-        votingToken = 1;
     }
 
     modifier onlyOwner() {
@@ -81,38 +80,29 @@ contract Voting {
         return candidates.length;
     }
 
-    function registration(address _wakanda, uint256 _token) external onlyOwner {
+    function getWakanda(address _wakanda)
+        external
+        view
+        returns (WakandaVoter memory)
+    {
+        return wakandaVoter[_wakanda];
+    }
+
+    function registration(address _wakanda) external onlyOwner {
         require(msg.sender != _wakanda, "You are not alowed for these action");
         require(
             !wakandaVoter[_wakanda].registered,
             "You are already registered"
         );
-        require(_token == votingToken, "Only one token can be send");
         require(
             wknd.balanceOf(msg.sender) > 0,
             "Sender doesn't have enaugh balance"
         );
 
         wakandaVoter[_wakanda].registered = true;
-        wknd.transfer(msg.sender, _wakanda, votingToken);
+        wknd.transfer(msg.sender, _wakanda, VOTING_TOKEN);
 
         return;
-    }
-
-    function isWakandaRegistered(address _wakanda)
-        external
-        view
-        returns (bool success)
-    {
-        return wakandaVoter[_wakanda].registered;
-    }
-
-    function isWakandaVoted(address _wakanda)
-        external
-        view
-        returns (bool success)
-    {
-        return wakandaVoter[_wakanda].hasVoted;
     }
 
     function vote(
@@ -172,7 +162,7 @@ contract Voting {
 
         uint256 balanceOfWakanda = wknd.balanceOf(_wakandaAddress);
         require(
-            balanceOfWakanda == votingToken,
+            balanceOfWakanda == VOTING_TOKEN,
             "Only one token could be delegated"
         );
 
@@ -190,16 +180,23 @@ contract Voting {
         return;
     }
 
-    function newChallenger(Candidate[] memory _leaderboard) public {
-        emit NewChallenger(_leaderboard);
+    function newChallenger(uint256[] memory _winnersIds) public {
+        emit NewChallenger(_winnersIds);
 
-        for (uint256 i = 0; i < _leaderboard.length; i++) {
-            winners[i] = _leaderboard[i];
+        for (uint256 i = 0; i < _winnersIds.length; i++) {
+            winnersIds[i] = _winnersIds[i];
         }
         return;
     }
 
     function winningCandidates() public view returns (Candidate[3] memory) {
-        return winners;
+        Candidate[3] memory leaderboard;
+        for (uint256 i = 0; i < winnersIds.length; i++) {
+            uint256 candidateId = winnersIds[i];
+            if (candidateId != 99) {
+                leaderboard[i] = candidates[candidateId];
+            }
+        }
+        return leaderboard;
     }
 }

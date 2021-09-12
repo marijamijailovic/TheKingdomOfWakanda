@@ -17,7 +17,16 @@ export async function getWakandaStatus(wakandaAddress) {
     return callAndCheckResponse(
         `/getWakandaStatus?wakandaAddress=${wakandaAddress}`,
         REST_METHOD.GET,
-        globalConstants.FAILED_GETING_BALANCE,
+        globalConstants.FAILED_GETING_WAKANDA,
+        response => !isNull(response.data),
+    );
+}
+
+export async function getWakandaBalance(wakandaAddress) {
+    return callAndCheckResponse(
+        `/getWakandaBalance?wakandaAddress=${wakandaAddress}`,
+        REST_METHOD.GET,
+        globalConstants.FAILED_GETING_WAKANDA_BALANCE,
         response => !isNull(response.data),
     );
 }

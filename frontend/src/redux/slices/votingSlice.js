@@ -5,7 +5,7 @@ export const votingSlice = createSlice({
   name: "voting",
   initialState: {voteData: {}, delegateData: {}, loading: "idle"},
   reducers: {
-    updateState: (state) =>{
+    updateVotingState: (state) =>{
       state.voteData = {};
       state.delegateData = {};
       state.loading = "idle";
@@ -21,7 +21,7 @@ export const votingSlice = createSlice({
   }
 })
 
-export const {updateState} = votingSlice.actions;
+export const {updateVotingState} = votingSlice.actions;
 
 export const voteData = state => state.voting.voteData;
 export const delegateData = state => state.voting.delegateData;

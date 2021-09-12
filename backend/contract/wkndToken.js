@@ -6,7 +6,6 @@ const getBalance = async(wakandaAddress) => {
         const response = await wkndTokenContract.methods.balanceOf(wakandaAddress).call();
         return response;
     } catch(error) {
-        console.log(error);
         throw new Error(error.message);
     }
 }

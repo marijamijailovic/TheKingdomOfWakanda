@@ -30,7 +30,7 @@ const Leaderboard = (props) => {
                         </tr>
                     </thead>
                     {/* These is hardcoded because receving format from sc is Array without field name and the order is name, age,cult, score*/}
-                    {leaderboardData.response && leaderboardData.response.map((d, index) =>{
+                    {leaderboardData.result && leaderboardData.result.map((d, index) =>{
                         return <tbody key={index}>
                                 <tr>
                                     <td>{index+1}</td>

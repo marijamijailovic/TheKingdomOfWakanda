@@ -5,7 +5,7 @@ import { isEmpty } from "underscore";
 import { getItem, setItem } from "../../../helpers/storage";
 import { globalConstants } from "../../../constants/global";
 import { useDispatch, useSelector } from "react-redux";
-import { registration, updateState } from "../../../redux/slices/wakandaSlice";
+import { registration, updateWakandaState } from "../../../redux/slices/wakandaSlice";
 import { wakandaRegistration } from "../../../redux/thunks/wakandaThunks";
 import Message from "../Message";
 
@@ -25,7 +25,7 @@ const RegistrationPage = (props) => {
             window.ethereum.on("accountsChanged", function (accounts) {
                 setItem(globalConstants.META_MASK_ACCOUNT, accounts[0]);
                 setWakandaAddress(accounts[0]);
-                dispatch(updateState());
+                dispatch(updateWakandaState());
             });
         }
     },[connectedAccount, web3Support, dispatch])
@@ -38,7 +38,7 @@ const RegistrationPage = (props) => {
         setInvalidAddress(false);
         const address = e.currentTarget.value;
         setWakandaAddress(address);
-        dispatch(updateState());
+        dispatch(updateWakandaState());
     }
 
     function handleSubmitWakandaRegistration(event) {

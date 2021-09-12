@@ -4,8 +4,9 @@ import { isEmpty } from "underscore";
 import { useDispatch, useSelector } from "react-redux";
 import { globalConstants } from "../../../constants/global";
 import { getItem, setItem } from "../../../helpers/storage";
-import { status, updateState } from "../../../redux/slices/wakandaSlice";
-import { getWakandaStatus } from "../../../redux/thunks/wakandaThunks";
+import { status, balance, updateWakandaState } from "../../../redux/slices/wakandaSlice";
+import { updateVotingState } from "../../../redux/slices/votingSlice";
+import { getWakandaStatus, getWakandaBalance } from "../../../redux/thunks/wakandaThunks";
 import Delegation from "./DelegationForm";
 import VotingComponent from "./VotingForm";
 import Leaderboard from "./Leaderboard";
@@ -17,9 +18,13 @@ const VotingPage = (props) => {
     const web3Support = getItem(globalConstants.WEB3_SUPPORT);
     
     const wakandaStatus = useSelector(status);
+    const wakandaBalance = useSelector(balance);
     
-    const balanceOfWKND = !isEmpty(wakandaStatus) && wakandaStatus.response ? +wakandaStatus.response.balance : 0;
-    const wakandaRegistered = !isEmpty(wakandaStatus) && wakandaStatus.response && wakandaStatus.response.registered;
+    const balanceOfWKND = !isEmpty(wakandaBalance) && wakandaBalance.result && +wakandaBalance.result;
+    //hardcoded because sc retur as array, without field name
+    const wakandaRegistered = !isEmpty(wakandaStatus) && wakandaStatus.result && wakandaStatus.result[0];
+    const wakandaVoted = !isEmpty(wakandaStatus) && wakandaStatus.result && wakandaStatus.result[2];
+    const delegator = !isEmpty(wakandaStatus) && wakandaStatus.result && wakandaStatus.result[4];
     
     const [wantToVote, setWantToVote] = useState(true);
     const [wakandaAddress, setWakandaAddress] = useState(connectedAccount);
@@ -29,7 +34,8 @@ const VotingPage = (props) => {
             window.ethereum.on("accountsChanged", function (accounts) {
                 setItem(globalConstants.META_MASK_ACCOUNT, accounts[0]);
                 setWakandaAddress(accounts[0]);
-                dispatch(updateState());
+                dispatch(updateWakandaState());
+                dispatch(updateVotingState());
             });
         }
     },[connectedAccount, web3Support, dispatch])
@@ -37,6 +43,7 @@ const VotingPage = (props) => {
     useEffect(()=>{
         setItem(globalConstants.META_MASK_ACCOUNT, wakandaAddress);
         dispatch(getWakandaStatus(wakandaAddress));
+        dispatch(getWakandaBalance(wakandaAddress));
     },[wakandaAddress, dispatch]);
 
     const onChangeRadioButtonHandler = (e) => {
@@ -46,7 +53,7 @@ const VotingPage = (props) => {
 
   return (
         <div className = "c-app c-default-layout flex-row align-items-center">
-            {wakandaRegistered && balanceOfWKND === 0 && <Leaderboard />}
+            {((wakandaRegistered && wakandaVoted) || (delegator && balanceOfWKND === 0)) && <Leaderboard />}
             {wakandaRegistered && wakandaAddress && balanceOfWKND > 0 &&
                     <div>
                         <div className = "notice">

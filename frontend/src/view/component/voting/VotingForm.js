@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { candidates} from "../../../redux/slices/candidatesSlice";
 import { getCandidates } from "../../../redux/thunks/candidatesThunks";
 import { vote } from "../../../redux/thunks/votingThunks";
-import { voteData, updateState } from "../../../redux/slices/votingSlice";
+import { voteData, updateVotingState } from "../../../redux/slices/votingSlice";
 import Leaderboard from "./Leaderboard";
 import Message from "../Message";
 
@@ -31,11 +31,12 @@ const VotingComponent = (props) => {
         setInvalidCandidate(false);
         const choosenPresident = event.target.value;
         setSelectedPresident(choosenPresident);
+        dispatch(updateVotingState());
     }
 
     const handleSubmitVote = (event) => {
         event.preventDefault();
-        dispatch(updateState());
+        dispatch(updateVotingState());
         if(selectedPresident === "-1") {
             setInvalidCandidate(true);
         } else {
@@ -67,7 +68,7 @@ const VotingComponent = (props) => {
                             onChange={onPresidentChangeHandler}
                             name="delegator">
                             <option value={"-1"}>Open to select president</option>
-                            {allCandidatesList.response && allCandidatesList.response.map((candidate,index)=>{
+                            {allCandidatesList.result && allCandidatesList.result.map((candidate,index)=>{
                                     return <option key={index} value={candidate[4]}>{`${candidate[0]}, age ${candidate[1]}, ${candidate[2]}`}</option>
                                 })
                             }
