@@ -11,8 +11,8 @@ Dapp has the following features:
   - A local NodeJS Server that collects data from the blockchain.
 
 Smart contract deployed on kovan testnet:
-  - [0x93cB58B433D9A1898744925DEB86b7F35D134107] (ERC20 wakanda token)
-  - [0xBC84Cb91BA79e67d5b3cB5728154Dd0bb565E5c3] (Voting contract)
+  - [https://kovan.etherscan.io/address/0x93cb58b433d9a1898744925deb86b7f35d134107] (ERC20 wakanda token)
+  - [https://kovan.etherscan.io/address/0xbc84cb91ba79e67d5b3cb5728154dd0bb565e5c3] (Voting contract)
  
 # :computer: Set up
 
