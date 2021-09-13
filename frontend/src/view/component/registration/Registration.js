@@ -59,7 +59,7 @@ const RegistrationPage = (props) => {
             <Form className="c-wakanda-form">
                 <Form.Group>
                     <Form.Label htmlFor="wakandaAddress">Input your address</Form.Label>
-                    <Form.Control type="text" name="wakandaAddress" isInvalid={invalidAddress} value={wakandaAddress} required onChange={(e) => onWakandaAddressChange(e)} /> 
+                    <Form.Control type="text" name="wakandaAddress" isInvalid={invalidAddress} value={wakandaAddress || ""} required onChange={(e) => onWakandaAddressChange(e)} /> 
                     <Form.Control.Feedback type="invalid">
                         Invalid address
                     </Form.Control.Feedback>
