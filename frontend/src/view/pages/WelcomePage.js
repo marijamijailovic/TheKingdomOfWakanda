@@ -52,7 +52,7 @@ const WelcomePage = () => {
             <Card body bg="lisght">
                 {`Welcome to the Kingdom of Wakanda voting`}
                 <br />
-                {`You are currently connected with address ${wakandaAddress}`}
+                {wakandaAddress && `You are currently connected with address ${wakandaAddress}`}
             </Card>
             {showRegistration && <Registration />}
             {showVoting && <Voting />}
